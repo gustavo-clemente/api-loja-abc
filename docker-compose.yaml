@@ -1,0 +1,14 @@
+services:
+  api-abc:
+    container_name: api-abc
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - api-network
+    command: ["--host", "0.0.0.0"]
+networks:
+  api-network:
+    driver: bridge
