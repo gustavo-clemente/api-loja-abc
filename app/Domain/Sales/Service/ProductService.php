@@ -6,6 +6,7 @@ namespace App\Domain\Sales\Service;
 
 use App\Domain\Sales\Repository\ProductRepository;
 use Exception;
+use App\Domain\Sales\Entity\Product;
 
 class ProductService
 {
@@ -15,8 +16,9 @@ class ProductService
         
     }
 
+    /** @return Product[] */
     public function getAllProducts(): array
     {
-        throw new Exception('Not Implemented');
+        return $this->productRepository->findAll();
     }
 }
