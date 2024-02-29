@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Sales\Entity;
 
 use App\Domain\Sales\ValueObject\OrderId;
-use Exception;
 
+/** @property OrderItem[] orderItems */
 class Order
 {
-    /** @param OrderItem[] orderItems*/
+    /** @param OrderItem[] orderItems */
     public function __construct(
         private ?OrderId $id,
         private array $orderItems
@@ -30,6 +30,12 @@ class Order
 
     public function getTotalAmount(): float
     {
-        throw new Exception('Not Implemented');
+        $totalAmount = 0;
+
+        foreach($this->orderItems as $orderItem){
+            $totalAmount += ($orderItem->getQuantity() * $orderItem->getProduct()->getPrice()) ;
+        }
+
+        return $totalAmount;
     }
 }

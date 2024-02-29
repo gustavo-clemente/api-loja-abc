@@ -6,14 +6,13 @@ namespace App\Domain\Sales\Entity;
 
 use App\Domain\Sales\ValueObject\OrderId;
 use App\Domain\Sales\ValueObject\OrderItemId;
-use App\Domain\Sales\ValueObject\ProductId;
 
 class OrderItem
 {
     public function __construct(
         private ?OrderItemId $orderItemId,
         private OrderId $orderId,
-        private ProductId $productId,
+        private Product $product,
         private int $quantity
     ) {
     }
@@ -28,9 +27,9 @@ class OrderItem
         return $this->orderId;
     }
 
-    public function getProductId(): ProductId
+    public function getProduct(): Product
     {
-        return $this->productId;
+        return $this->product;
     }
 
     public function getQuantity(): float
