@@ -42,7 +42,7 @@ class OrderTest extends TestCase
                             id: new ProductId('1'),
                             name: 'Product 1',
                             price: 500,
-                            description: 'Product 1'
+                            description: 'Product 1 Description'
                         ),
                         quantity: 1
 
@@ -54,7 +54,7 @@ class OrderTest extends TestCase
                             id: new ProductId('2'),
                             name: 'Product 2',
                             price: 500,
-                            description: 'Product 2'
+                            description: 'Product 2 Description'
                         ),
                         quantity: 2
 
@@ -66,7 +66,7 @@ class OrderTest extends TestCase
                             id: new ProductId('3'),
                             name: 'Product 3',
                             price: 100,
-                            description: 'Product 3'
+                            description: 'Product 3 Description'
                         ),
                         quantity: 3
 
@@ -81,9 +81,9 @@ class OrderTest extends TestCase
                         orderId: new OrderId('1'),
                         product: new Product(
                             id: new ProductId('1'),
-                            name: 'Product 1',
+                            name: 'Product 4',
                             price: 250.50,
-                            description: 'Product 1'
+                            description: 'Product 4 Description'
                         ),
                         quantity: 1
 
@@ -93,9 +93,9 @@ class OrderTest extends TestCase
                         orderId: new OrderId('2'),
                         product: new Product(
                             id: new ProductId('2'),
-                            name: 'Product 2',
+                            name: 'Product 5',
                             price: 274.35,
-                            description: 'Product 2'
+                            description: 'Product 5 Description'
                         ),
                         quantity: 1
 
@@ -105,9 +105,9 @@ class OrderTest extends TestCase
                         orderId: new OrderId('3'),
                         product: new Product(
                             id: new ProductId('3'),
-                            name: 'Product 3',
+                            name: 'Product 6',
                             price: 339.98,
-                            description: 'Product 3'
+                            description: 'Product 6 Description'
                         ),
                         quantity: 1
 
@@ -122,9 +122,9 @@ class OrderTest extends TestCase
                         orderId: new OrderId('1'),
                         product: new Product(
                             id: new ProductId('1'),
-                            name: 'Product 1',
+                            name: 'Product 7',
                             price: 5.99,
-                            description: 'Product 1'
+                            description: 'Product 7 Description'
                         ),
                         quantity: 1
 
@@ -134,9 +134,9 @@ class OrderTest extends TestCase
                         orderId: new OrderId('2'),
                         product: new Product(
                             id: new ProductId('2'),
-                            name: 'Product 2',
+                            name: 'Product 8',
                             price: 15.49,
-                            description: 'Product 2'
+                            description: 'Product 8 Description'
                         ),
                         quantity: 1
 
@@ -146,9 +146,9 @@ class OrderTest extends TestCase
                         orderId: new OrderId('3'),
                         product: new Product(
                             id: new ProductId('3'),
-                            name: 'Product 3',
+                            name: 'Product 9',
                             price: 42.75,
-                            description: 'Product 3'
+                            description: 'Product 9 Description'
                         ),
                         quantity: 1
 
