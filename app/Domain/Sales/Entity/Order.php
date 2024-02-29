@@ -6,10 +6,9 @@ namespace App\Domain\Sales\Entity;
 
 use App\Domain\Sales\ValueObject\OrderId;
 
-/** @property OrderItem[] orderItems */
 class Order
 {
-    /** @param OrderItem[] orderItems */
+    /** @param OrderItem[] $orderItems */
     public function __construct(
         private ?OrderId $id,
         private array $orderItems
