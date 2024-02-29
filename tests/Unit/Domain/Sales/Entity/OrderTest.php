@@ -30,7 +30,7 @@ class OrderTest extends TestCase
         $this->assertEquals($expectedResult, $totalAmount);
     }
 
-    public function provideOrderData(): array
+    public static function provideOrderData(): array
     {
         return [
             'test with integer values' => [
