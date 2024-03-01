@@ -53,19 +53,19 @@ class ProductApplicationTest extends TestCase
         $products = $productCollection->getItems();
 
         $this->assertInstanceOf(FindAllProductsOutput::class, $outPut);
-        $this->assertIsArray($outPut->getOutput());
-        $this->assertArrayHasKey('items', $outPut->getOutput());
-        $this->assertCount(3 , $outPut->getOutput()['items']);
-        $this->assertEquals($products[0]->getName(), $outPut->getOutput()['items'][0]['name']);
-        $this->assertEquals($products[0]->getPrice(), $outPut->getOutput()['items'][0]['price']);
-        $this->assertEquals($products[0]->getDescription(), $outPut->getOutput()['items'][0]['description']);
+        $this->assertIsArray($outPut->jsonSerialize());
+        $this->assertArrayHasKey('items', $outPut->jsonSerialize());
+        $this->assertCount(3 , $outPut->jsonSerialize()['items']);
+        $this->assertEquals($products[0]->getName(), $outPut->jsonSerialize()['items'][0]['name']);
+        $this->assertEquals($products[0]->getPrice(), $outPut->jsonSerialize()['items'][0]['price']);
+        $this->assertEquals($products[0]->getDescription(), $outPut->jsonSerialize()['items'][0]['description']);
         $this->assertEquals(
             $products[0]->getCreatedAt()->format('Y-m-d H:i:s'), 
-            $outPut->getOutput()['items'][0]['createdAt']
+            $outPut->jsonSerialize()['items'][0]['createdAt']
         );
         $this->assertEquals(
-            $products[0]->getUpdatedAt()->format('Y-m-d H:i:s') , $outPut->getOutput()['items'][0]['updatedAt']
+            $products[0]->getUpdatedAt()->format('Y-m-d H:i:s') , $outPut->jsonSerialize()['items'][0]['updatedAt']
         );
-        $this->assertNull($outPut->getOutput()['items'][1]['updatedAt']);
+        $this->assertNull($outPut->jsonSerialize()['items'][1]['updatedAt']);
     }
 }

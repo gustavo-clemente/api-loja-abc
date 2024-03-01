@@ -7,7 +7,7 @@ namespace App\Application\Sales\Output;
 use App\Domain\Sales\Entity\Product;
 use App\Domain\Sales\Entity\ProductCollection;
 
-class FindAllProductsOutput
+class FindAllProductsOutput implements \JsonSerializable
 {
     public function __construct(
         private ProductCollection $products
@@ -15,7 +15,7 @@ class FindAllProductsOutput
 
     }
 
-    public function getOutput(): array
+    public function jsonSerialize(): array
     {
         return [
             "items" => array_map(function(Product $product) {

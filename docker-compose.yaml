@@ -7,12 +7,13 @@ services:
     ports:
       - 8000:8000
     command: ["--host", "0.0.0.0"]
-    env_file:
-      - ./.env
+    env_file: ./.env
     environment:
       DB_HOST: database
     networks:
       - api-network
+    depends_on:
+      - database
   database:
     container_name: database
     image: mysql:8.3.0

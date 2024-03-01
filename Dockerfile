@@ -11,10 +11,12 @@ RUN apk --no-cache add \
     bash \
     unzip \
     zlib-dev \
+    sqlite-dev \
     libzip-dev \
     && docker-php-ext-install zip
 
 RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install pdo_sqlite
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 
