@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Sales\Entity;
 
 use App\Domain\Sales\ValueObject\ProductId;
+use Illuminate\Support\Facades\Date;
 
 class Product
 {
@@ -12,7 +13,9 @@ class Product
         private ?ProductId $id,
         private string $name,
         private float $price,
-        private string $description
+        private string $description,
+        private Date $createdAt,
+        private Date $updateAt
     ) {
         
     }
@@ -35,5 +38,15 @@ class Product
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getCreatedAt(): Date
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): Date
+    {
+        return $this->updateAt;
     }
 }

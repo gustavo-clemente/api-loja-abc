@@ -1,14 +1,35 @@
 services:
-  api-abc:
+  api:
     container_name: api-abc
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 8000:8000
+    command: ["--host", "0.0.0.0"]
+    env_file:
+      - ./.env
+    environment:
+      DB_HOST: database
     networks:
       - api-network
-    command: ["--host", "0.0.0.0"]
+  database:
+    container_name: database
+    image: mysql:8.3.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    networks:
+      - api-network
+    volumes:
+      - abc-database:/var/lib/mysql
+
 networks:
   api-network:
     driver: bridge
+
+volumes:
+  abc-database:
