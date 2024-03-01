@@ -17,7 +17,6 @@ class ProductService
         
     }
 
-    /** @return Product[] */
     public function getAllProducts(): ProductCollection
     {
         return $this->productRepository->findAll();
