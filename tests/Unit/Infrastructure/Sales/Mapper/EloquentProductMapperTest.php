@@ -20,9 +20,9 @@ class EloquentProductMapperTest extends TestCase
 
         $productModel = $this->createProductModelMock(
             id: 1,
-            name: 'product for test',
+            name: 'product for test 1',
             price: 10.99,
-            description: 'product description',
+            description: 'product description 1',
             createdAt: Carbon::now(),
             updatedAt: Carbon::now(),
         );
@@ -47,25 +47,25 @@ class EloquentProductMapperTest extends TestCase
         $collection = new Collection([
             $this->createProductModelMock(
                 id: 1,
-                name: 'product for test',
+                name: 'product for test 2',
                 price: 10.99,
-                description: 'product description',
+                description: 'product description 2',
                 createdAt: Carbon::now(),
                 updatedAt: Carbon::now(),
             ),
             $this->createProductModelMock(
                 id: 1,
-                name: 'product for test',
+                name: 'product for test 3',
                 price: 10.99,
-                description: 'product description',
+                description: 'product description 3',
                 createdAt: Carbon::now(),
                 updatedAt: Carbon::now(),
             ),
             $this->createProductModelMock(
                 id: 1,
-                name: 'product for test',
+                name: 'product for test 4',
                 price: 10.99,
-                description: 'product description',
+                description: 'product description 4',
                 createdAt: Carbon::now(),
                 updatedAt: Carbon::now(),
             )
