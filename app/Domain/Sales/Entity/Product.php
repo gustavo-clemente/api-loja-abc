@@ -14,8 +14,8 @@ class Product
         private string $name,
         private float $price,
         private string $description,
-        private DateTime $createdAt,
-        private DateTime $updateAt
+        private DateTime $createdAt = new DateTime(),
+        private DateTime $updateAt = new DateTime()
     ) {
         
     }

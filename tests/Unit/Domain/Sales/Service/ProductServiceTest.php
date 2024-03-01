@@ -44,9 +44,8 @@ class ProductServiceTest extends TestCase
 
         $products = app(ProductService::class)->getAllProducts();
 
-        $this->assertIsArray($products);
         $this->assertInstanceOf(ProductCollection::class, $products);
-        $this->assertContainsOnlyInstancesOf(Product::class, $products);
-        $this->assertCount(3, $products);
+        $this->assertContainsOnlyInstancesOf(Product::class, $products->getItems());
+        $this->assertCount(3, $products->getItems());
     }
 }
