@@ -20,8 +20,8 @@ class EloquentProductMapper
             name: $productModel->name,
             price: (float)$productModel->price,
             description: $productModel->description,
-            createdAt: $productModel->created_at,
-            updateAt: $productModel->updated_at
+            createdAt: new \DateTime($productModel->created_at->toDateTimeString()),
+            updateAt: new \Datetime($productModel->updated_at->toDateTimeString()),
         );
     }
 
