@@ -10,6 +10,7 @@ use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Entity\Product;
 use App\Domain\Sales\Exception\EmptyOrderException;
 use App\Domain\Sales\Exception\InvalidOrderItemQuantityException;
+use App\Domain\Sales\Exception\OrderWithDuplicateProductEntyException;
 use App\Domain\Sales\Repository\OrderRepository;
 use App\Domain\Sales\Service\OrderService;
 use App\Domain\Sales\ValueObject\OrderId;
@@ -71,7 +72,7 @@ class OrderServiceTest extends TestCase
      * @dataProvider dataProviderForTestOrderItemLessThanZero
      * @param  OrderItem[] $orderItems
      */
-    public function testCreateOrderThrowExceptionWherOrderItemQuantityLessThanZero(array $orderItems): void
+    public function testCreateOrderThrowExceptionWhenOrderItemQuantityLessThanZero(array $orderItems): void
     {
         $this->expectException(InvalidOrderItemQuantityException::class);
         $this->mock(OrderRepository::class, function (MockInterface $mock) {
@@ -88,6 +89,51 @@ class OrderServiceTest extends TestCase
         app(OrderService::class)->createOrder($orderForTest);
     }
 
+    public function testCreateOrderThrowExceptionWhenHasDuplicateProductId(): void
+    {
+        $this->expectException(OrderWithDuplicateProductEntyException::class);
+        $this->mock(OrderRepository::class, function (MockInterface $mock) {
+            $mock
+              ->shouldNotReceive("createOrder")
+            ;
+        });
+
+        $orderForTest = new Order(
+            id: null,
+            orderItems: new OrderItemsCollection([
+                new OrderItem(
+                    id: null,
+                    orderId: null,
+                    product: new Product(
+                        id: new ProductId('1'),
+                    ),
+                    quantity:2,
+
+                ),
+                new OrderItem(
+                    id: null,
+                    orderId: null,
+                    product: new Product(
+                        id: new ProductId('13'),
+                    ),
+                    quantity:3,
+
+                ),
+                new OrderItem(
+                    id: null,
+                    orderId: null,
+                    product: new Product(
+                        id: new ProductId('1'),
+                    ),
+                    quantity:3,
+
+                )
+            ])
+        );
+
+        app(OrderService::class)->createOrder($orderForTest);
+    }
+
     public static function dataProviderForTestOrderItemLessThanZero(): array
     {
         return [
@@ -97,10 +143,7 @@ class OrderServiceTest extends TestCase
                         id: null,
                         orderId: null,
                         product: new Product(
-                            id: null,
-                            name: 'p1',
-                            priceInCents: null,
-                            description: ''
+                            id: new ProductId('1'),
                         ),
                         quantity:2,
     
@@ -110,10 +153,7 @@ class OrderServiceTest extends TestCase
                         id: null,
                         orderId: null,
                         product: new Product(
-                            id: null,
-                            name: 'p2',
-                            priceInCents: null,
-                            description: ''
+                            id: new ProductId('2'),
                         ),
                         quantity:2,
     
@@ -123,10 +163,7 @@ class OrderServiceTest extends TestCase
                         id: null,
                         orderId: null,
                         product: new Product(
-                            id: null,
-                            name: 'p3',
-                            priceInCents: null,
-                            description: ''
+                            id: new ProductId('3'),
                         ),
                         quantity:0,
     
@@ -140,10 +177,7 @@ class OrderServiceTest extends TestCase
                         id: null,
                         orderId: null,
                         product: new Product(
-                            id: null,
-                            name: 'p4',
-                            priceInCents: null,
-                            description: ''
+                            id: new ProductId('1'),
                         ),
                         quantity:2,
     
@@ -153,10 +187,7 @@ class OrderServiceTest extends TestCase
                         id: null,
                         orderId: null,
                         product: new Product(
-                            id: null,
-                            name: 'p5',
-                            priceInCents: null,
-                            description: ''
+                            id: new ProductId('2'),
                         ),
                         quantity:-1,
     
@@ -166,10 +197,7 @@ class OrderServiceTest extends TestCase
                         id: null,
                         orderId: null,
                         product: new Product(
-                            id: null,
-                            name: 'p6',
-                            priceInCents: null,
-                            description: ''
+                            id: new ProductId('3'),
                         ),
                         quantity:1,
     

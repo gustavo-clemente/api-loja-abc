@@ -6,6 +6,7 @@ namespace App\Domain\Sales\Entity;
 
 use App\Domain\Sales\Exception\EmptyOrderException;
 use App\Domain\Sales\Exception\InvalidOrderItemQuantityException;
+use App\Domain\Sales\Exception\OrderWithDuplicateProductEntyException;
 use App\Domain\Sales\ValueObject\OrderId;
 use DateTime;
 
@@ -53,15 +54,44 @@ class Order
 
     public function validate(): void
     {
+        $this->validateOrderNotEmpty();
+        $this->validateOrderItemsQuantity();
+        $this->validateUniqueProductEntries();
+    }
+
+    private function validateOrderNotEmpty(): void
+    {
         if($this->orderItems->isEmpty())
         {
             throw new EmptyOrderException("Order must contain at least one item");
         }
 
+    }
+
+    private function validateOrderItemsQuantity(): void
+    {
         foreach($this->orderItems->getItems() as $orderItem){
             if($orderItem->getQuantity() <= 0){
                 throw new InvalidOrderItemQuantityException("Item quantity cannot be less or equal zero");
             }
+        }
+    }
+
+    private function validateUniqueProductEntries(): void
+    {
+        $productItemsIds = [];
+        
+        foreach($this->orderItems->getItems() as $orderItem){
+
+            $productIdentifier = $orderItem->getProduct()->getId()->getIdentifier();
+
+            if(in_array($productIdentifier, $productItemsIds)){
+                throw new OrderWithDuplicateProductEntyException(
+                    "A order should not have two order Items with same product id. Specify quantity"
+                );
+            }
+
+            $productItemsIds[] = $productIdentifier;
         }
     }
 }

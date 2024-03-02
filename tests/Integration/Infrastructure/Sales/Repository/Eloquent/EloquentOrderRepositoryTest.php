@@ -23,43 +23,34 @@ class EloquentOrderRepositoryTest extends TestCase
     {
         $productsModels = [
             ProductModel::factory()->createOne([
-                "price" => 1200
+                "price_in_cents" => 120000
             ]),
             ProductModel::factory()->createOne([
-                "price" => 1500
+                "price_in_cents" => 150000
             ]),
             ProductModel::factory()->createOne([
-                "price" => 1800
+                "price_in_cents" => 180000
             ]),
         ];
         
         $orderItemsCollection = new OrderItemsCollection([
             new OrderItem(
-                id: null,
-                orderId: null,
-                productId: new ProductId((string) $productsModels[0]->id),
-                price: null,
+                product: new Product(
+                    id: new ProductId((string) $productsModels[0]->id)
+                ),
                 quantity: 2,
-                createdAt: null,
-                updatedAt: null
             ),
             new OrderItem(
-                id: null,
-                orderId: null,
-                productId: new ProductId((string) $productsModels[1]->id),
-                price: null,
+                product: new Product(
+                    id: new ProductId((string) $productsModels[1]->id)
+                ),
                 quantity: 2,
-                createdAt: null,
-                updatedAt: null
             ),
             new OrderItem(
-                id: null,
-                orderId: null,
-                productId: new ProductId((string) $productsModels[2]->id),
-                price: null,
+                product: new Product(
+                    id: new ProductId((string) $productsModels[2]->id)
+                ),
                 quantity: 2,
-                createdAt: null,
-                updatedAt: null
             )
         ]);
 
@@ -83,20 +74,17 @@ class EloquentOrderRepositoryTest extends TestCase
 
         $this->assertDatabaseHas("order_items", [
             "order_id" => $orderId->getIdentifier(),
-            "product_id" => $productsModels[0]->id,
-            "price" => $productsModels[0]->price
+            "product_id" => $productsModels[0]->id
         ]);
 
         $this->assertDatabaseHas("order_items", [
             "order_id" => $orderId->getIdentifier(),
-            "product_id" => $productsModels[1]->id,
-            "price" => $productsModels[1]->price
+            "product_id" => $productsModels[1]->id
         ]);
 
         $this->assertDatabaseHas("order_items", [
             "order_id" => $orderId->getIdentifier(),
-            "product_id" => $productsModels[2]->id,
-            "price" => $productsModels[2]->price
+            "product_id" => $productsModels[2]->id
         ]);
     }
 }

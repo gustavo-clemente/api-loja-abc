@@ -12,10 +12,10 @@ use DateTime;
 class OrderItem
 {
     public function __construct(
-        private ?OrderItemId $id,
-        private ?OrderId $orderId,
-        private Product $product,
-        private int $quantity,
+        private ?OrderItemId $id = null,
+        private ?OrderId $orderId = null,
+        private ?Product $product = null,
+        private ?int $quantity = null,
         private ?DateTime $createdAt = null,
         private ?DateTime $updatedAt = null,
     ) {
@@ -31,12 +31,12 @@ class OrderItem
         return $this->orderId;
     }
 
-    public function getProduct(): Product
+    public function getProduct(): ?Product
     {
         return $this->product;
     }
 
-    public function getQuantity(): float
+    public function getQuantity(): ?float
     {
         return $this->quantity;
     }
