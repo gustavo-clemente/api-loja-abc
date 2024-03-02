@@ -13,8 +13,8 @@ use DateTime;
 class Order
 {
     public function __construct(
-        private ?OrderId $id,
-        private OrderItemsCollection $orderItems,
+        private ?OrderId $id = null,
+        private ?OrderItemsCollection $orderItems = null,
         private ?DateTime $createdAt = null,
         private ?DateTime $updatedAt = null,
     ) {
@@ -26,7 +26,7 @@ class Order
         return $this->id;
     }
 
-    public function getOrderItems(): OrderItemsCollection
+    public function getOrderItems(): ?OrderItemsCollection
     {
         return $this->orderItems;
     }
@@ -34,6 +34,10 @@ class Order
     public function getTotalAmountInReal(): float
     {
         $totalAmountInCents = 0;
+
+        if(is_null($this->orderItems)){
+            $totalAmountInCents = 0;
+        }
 
         foreach($this->orderItems->getItems() as $orderItem){
             $totalAmountInCents += ($orderItem->getQuantity() * $orderItem->getProduct()->getPriceInCents()) ;

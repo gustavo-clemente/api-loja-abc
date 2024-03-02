@@ -16,4 +16,5 @@ abstract class Identifier
     {
         return $this->identifier;
     }
+    
 }
