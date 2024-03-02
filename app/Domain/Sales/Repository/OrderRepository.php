@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Sales\Repository;
 
 use App\Domain\Sales\Entity\Order;
-use App\Domain\Sales\Entity\OrderItem;
+use App\Domain\Sales\Entity\OrderCollection;
+use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\ValueObject\OrderId;
 
 interface OrderRepository
 {
     public function createOrder(Order $order): OrderId;
 
-    /** @return Order[] */
-    public function findAll(): array;
+    public function findAll(): OrderCollection;
 
     public function findById(OrderId $orderId): ?Order;
 
     public function cancelOrder(OrderId $order): bool;
 
-    /** @param OrderItem[] $orderItems*/
-    public function addOrderItems(array $orderItems): ?Order;
+    public function addOrderItems(OrderItemsCollection $orderItems): Order;
 }

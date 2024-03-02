@@ -27,7 +27,7 @@ class OrderItem
         return $this->id;
     }
 
-    public function getOrderId(): OrderId
+    public function getOrderId(): ?OrderId
     {
         return $this->orderId;
     }
@@ -37,7 +37,7 @@ class OrderItem
         return $this->productId;
     }
 
-    public function getPrice(): float
+    public function getPrice(): ?float
     {
         return $this->price;
     }

@@ -7,6 +7,6 @@ use App\Domain\Shared\Entity\Collection;
 use App\Domain\Sales\Entity\OrderItem;
 
 /** @method OrderItem[] getItems() */
-class OrderItemsCollection extends Collection
+class OrderCollection extends Collection
 {
 }
