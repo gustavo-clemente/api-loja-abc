@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types= 1);
+declare(strict_types=1);
 
 namespace App\Infrastructure\Sales\Repository\Eloquent;
 
@@ -13,24 +13,40 @@ use App\Domain\Sales\ValueObject\OrderId;
 use App\Infrastructure\Sales\Model\OrderItemModel;
 use App\Infrastructure\Sales\Model\OrderModel;
 use App\Infrastructure\Sales\Model\ProductModel;
+use Illuminate\Support\Facades\DB;
 
 class EloquentOrderRepository implements OrderRepository
 {
     public function createOrder(Order $order): OrderId
     {
+        DB::beginTransaction();
+
         $orderModel = OrderModel::create();
 
-        $orderItemsModels = array_map(function(OrderItem $orderItem){
-            $productModel = ProductModel::find($orderItem->getProductId()->getIdentifier());
+        $productIds = [];
+        foreach ($order->getOrderItems()->getItems() as $orderItem) {
+            $productIds[] = $orderItem->getProductId()->getIdentifier();
+        }
 
-            return new OrderItemModel([
+        $productModels = ProductModel::select('id', 'price')->whereIn('id', $productIds)->get()->keyBy('id');
+
+        $orderItemsModels = [];
+
+        foreach($order->getOrderItems()->getItems() as $orderItem){
+            $productId = $orderItem->getProductId()->getIdentifier();
+            $productModel = $productModels[$productId] ?? null;
+
+            $orderItemsModels[] = [
+                "order_id" => $orderModel->id,
                 "product_id" => $orderItem->getProductId()->getIdentifier(),
-                "quantity"=> $orderItem->getQuantity(),
+                "quantity" => $orderItem->getQuantity(),
                 "price" => $productModel->price
-            ]);
-        }, $order->getOrderItems()->getItems());
+            ];
+        }
 
-        $orderModel->items()->saveMany($orderItemsModels);
+        OrderItemModel::insert($orderItemsModels);
+
+        Db::commit();
 
         return new OrderId((string)$orderModel->id);
     }
