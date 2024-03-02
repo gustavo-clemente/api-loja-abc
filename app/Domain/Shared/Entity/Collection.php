@@ -16,4 +16,9 @@ abstract class Collection
     {
         return $this->items;
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->items);
+    }
 }

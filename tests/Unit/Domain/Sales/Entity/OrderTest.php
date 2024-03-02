@@ -6,6 +6,7 @@ namespace Tests\Unit\Domain\Sales\Entity;
 
 use App\Domain\Sales\Entity\Order;
 use App\Domain\Sales\Entity\OrderItem;
+use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Entity\Product;
 use App\Domain\Sales\ValueObject\OrderId;
 use App\Domain\Sales\ValueObject\OrderItemId;
@@ -18,7 +19,7 @@ class OrderTest extends TestCase
      * @dataProvider provideOrderData
      * @param OrderItem[] $input
      */
-    public function testTotalAmountCalculationIsCorrect(array $input, float $expectedResult): void
+    public function testTotalAmountCalculationIsCorrect(OrderItemsCollection $input, float $expectedResult): void
     {
         $order = new Order(
             id: new OrderId('1'),
@@ -34,131 +35,95 @@ class OrderTest extends TestCase
     {
         return [
             'test with integer values' => [
-                [
+                new OrderItemsCollection([
                     new OrderItem(
-                        orderItemId: new OrderItemId('1'),
+                        id: new OrderItemId('1'),
                         orderId: new OrderId('1'),
-                        product: new Product(
-                            id: new ProductId('1'),
-                            name: 'Product 1',
-                            price: 500,
-                            description: 'Product 1 Description'
-                        ),
+                        productId: new ProductId('1'),
+                        price: 500,
                         quantity: 1
 
                     ),
                     new OrderItem(
-                        orderItemId: new OrderItemId('2'),
+                        id: new OrderItemId('2'),
                         orderId: new OrderId('2'),
-                        product: new Product(
-                            id: new ProductId('2'),
-                            name: 'Product 2',
-                            price: 500,
-                            description: 'Product 2 Description'
-                        ),
+                        productId: new ProductId('2'),
+                        price: 500,
                         quantity: 2
 
                     ),
                     new OrderItem(
-                        orderItemId: new OrderItemId('3'),
+                        id: new OrderItemId('3'),
                         orderId: new OrderId('3'),
-                        product: new Product(
-                            id: new ProductId('3'),
-                            name: 'Product 3',
-                            price: 100,
-                            description: 'Product 3 Description'
-                        ),
+                        productId: new ProductId('3'),
+                        price: 100,
                         quantity: 3
 
                     ),
-                ],
+                ]),
                 1800.00
             ],
             'test with float values' => [
-                [
+                new OrderItemsCollection([
                     new OrderItem(
-                        orderItemId: new OrderItemId('1'),
+                        id: new OrderItemId('1'),
                         orderId: new OrderId('1'),
-                        product: new Product(
-                            id: new ProductId('1'),
-                            name: 'Product 4',
-                            price: 250.50,
-                            description: 'Product 4 Description'
-                        ),
+                        productId: new ProductId('1'),
+                        price: 250.50,
                         quantity: 1
 
                     ),
                     new OrderItem(
-                        orderItemId: new OrderItemId('2'),
+                        id: new OrderItemId('2'),
                         orderId: new OrderId('2'),
-                        product: new Product(
-                            id: new ProductId('2'),
-                            name: 'Product 5',
-                            price: 274.35,
-                            description: 'Product 5 Description'
-                        ),
+                        productId: new ProductId('2'),
+                        price: 274.35,
                         quantity: 1
 
                     ),
                     new OrderItem(
-                        orderItemId: new OrderItemId('3'),
+                        id: new OrderItemId('3'),
                         orderId: new OrderId('3'),
-                        product: new Product(
-                            id: new ProductId('3'),
-                            name: 'Product 6',
-                            price: 339.98,
-                            description: 'Product 6 Description'
-                        ),
+                        productId: new ProductId('3'),
+                        price: 339.98,
                         quantity: 1
 
                     ),
-                ],
+                ]),
                 864.83
             ],
             'test with float values with more precision' => [
-                [
+                new OrderItemsCollection([
                     new OrderItem(
-                        orderItemId: new OrderItemId('1'),
+                        id: new OrderItemId('1'),
                         orderId: new OrderId('1'),
-                        product: new Product(
-                            id: new ProductId('1'),
-                            name: 'Product 7',
-                            price: 5.99,
-                            description: 'Product 7 Description'
-                        ),
+                        productId: new ProductId('1'),
+                        price: 5.99,
                         quantity: 1
 
                     ),
                     new OrderItem(
-                        orderItemId: new OrderItemId('2'),
+                        id: new OrderItemId('2'),
                         orderId: new OrderId('2'),
-                        product: new Product(
-                            id: new ProductId('2'),
-                            name: 'Product 8',
-                            price: 15.49,
-                            description: 'Product 8 Description'
-                        ),
+                        productId: new ProductId('2'),
+                        price: 5.99,
                         quantity: 1
 
                     ),
                     new OrderItem(
-                        orderItemId: new OrderItemId('3'),
+                        id: new OrderItemId('3'),
                         orderId: new OrderId('3'),
-                        product: new Product(
-                            id: new ProductId('3'),
-                            name: 'Product 9',
-                            price: 42.75,
-                            description: 'Product 9 Description'
-                        ),
+                        productId: new ProductId('3'),
+                        price: 42.75,
                         quantity: 1
 
                     ),
-                ],
-                64.23
+                ]),
+                54.73
             ],
 
             'test without any item' => [
-                [],
+                new OrderItemsCollection([]),
                 0
             ]
         ];

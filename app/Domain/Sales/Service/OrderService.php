@@ -17,9 +17,10 @@ class OrderService
         
     }
 
-    public function createOrder(Order $order): Order
+    public function createOrder(Order $order): OrderId
     {
-        throw new Exception('Not Implemented');
+        $order->validate();
+        return $this->orderRepository->createOrder($order);
     }
 
     /** @return Order[] */

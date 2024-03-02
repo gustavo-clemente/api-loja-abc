@@ -10,7 +10,7 @@ use App\Domain\Sales\ValueObject\OrderId;
 
 interface OrderRepository
 {
-    public function createOrder(Order $order): Order;
+    public function createOrder(Order $order): OrderId;
 
     /** @return Order[] */
     public function findAll(): array;
