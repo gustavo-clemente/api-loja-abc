@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace Tests\Feature;
 
 use App\Infrastructure\Sales\Model\ProductModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;

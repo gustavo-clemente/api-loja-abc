@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types= 1);
+
+namespace App\UserInterface\Sales\Controllers;
+
+use App\Application\Sales\Input\CreateOrderInput;
+use App\Application\Sales\OrderApplication;
+use App\Infrastructure\Laravel\Controller;
+use App\UserInterface\Sales\Request\CreateOrderRequest;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+class OrderController extends Controller
+{
+    public function __construct(
+        private OrderApplication $orderApplication
+    ) {
+
+    }
+    public function store(CreateOrderRequest $request): JsonResponse
+    {
+        $inputCreateOrder = new CreateOrderInput($request->toArray());
+
+        $output = $this->orderApplication->createOrder($inputCreateOrder);
+
+        return new JsonResponse($output->jsonSerialize(), Response::HTTP_CREATED);
+    }
+}
