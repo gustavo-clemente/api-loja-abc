@@ -21,7 +21,7 @@ class ProductApplicationTest extends TestCase
             new Product(
                 id: new ProductId('1'),
                 name: 'Product 1',
-                price: 500,
+                priceInCents: 500000,
                 description: 'Product 1 Description',
                 createdAt: new \DateTime('2024-01-01 14:30:00'),
                 updateAt: new \DateTime('2024-01-02 14:30:00'),
@@ -29,14 +29,14 @@ class ProductApplicationTest extends TestCase
             new Product(
                 id: new ProductId('2'),
                 name: 'Product 2',
-                price: 500,
+                priceInCents: 500000,
                 description: 'Product 2 Description',
                 createdAt: new \DateTime('2024-02-01 16:30:00')
             ),
             new Product(
                 id: new ProductId('3'),
                 name: 'Product 3',
-                price: 500,
+                priceInCents: 500000,
                 description: 'Product 3 Description',
                 createdAt: new \DateTime('2024-03-01 18:30:00')
             ),
@@ -57,7 +57,7 @@ class ProductApplicationTest extends TestCase
         $this->assertArrayHasKey('items', $outPut->jsonSerialize());
         $this->assertCount(3 , $outPut->jsonSerialize()['items']);
         $this->assertEquals($products[0]->getName(), $outPut->jsonSerialize()['items'][0]['name']);
-        $this->assertEquals($products[0]->getPrice(), $outPut->jsonSerialize()['items'][0]['price']);
+        $this->assertEquals($products[0]->getPriceInReal(), $outPut->jsonSerialize()['items'][0]['price']);
         $this->assertEquals($products[0]->getDescription(), $outPut->jsonSerialize()['items'][0]['description']);
         $this->assertEquals(
             $products[0]->getCreatedAt()->format('Y-m-d H:i:s'), 

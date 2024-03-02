@@ -24,19 +24,19 @@ class ProductServiceTest extends TestCase
                 new Product(
                     id: new ProductId("1"),
                     name: "Product 1",
-                    price: 2000,
+                    priceInCents: 200000,
                     description: ""
                 ),
                 new Product(
                     id: new ProductId("2"),
                     name: "Product 2",
-                    price: 2000,
+                    priceInCents: 200000,
                     description: ""
                 ),
                 new Product(
                     id: new ProductId("3"),
                     name: "Product 3",
-                    price: 2000,
+                    priceInCents: 200000,
                     description: ""
                 )
               ]));

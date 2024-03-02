@@ -24,6 +24,7 @@ class EloquentOrderRepository implements OrderRepository
         $orderModel = OrderModel::create();
 
         $productIds = [];
+        
         foreach ($order->getOrderItems()->getItems() as $orderItem) {
             $productIds[] = $orderItem->getProductId()->getIdentifier();
         }

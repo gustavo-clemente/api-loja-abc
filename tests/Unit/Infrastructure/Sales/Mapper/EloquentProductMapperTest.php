@@ -21,7 +21,7 @@ class EloquentProductMapperTest extends TestCase
         $productModel = $this->createProductModelMock(
             id: 1,
             name: 'product for test 1',
-            price: 10.99,
+            price_in_cents: 1099,
             description: 'product description 1',
             createdAt: Carbon::now(),
             updatedAt: Carbon::now(),
@@ -36,7 +36,7 @@ class EloquentProductMapperTest extends TestCase
         $this->assertInstanceOf(ProductId::class, $product->getId());
         $this->assertEquals($productModel->id, $product->getId()->getIdentifier());
         $this->assertEquals($productModel->name, $product->getName());
-        $this->assertEquals($productModel->price, $product->getPrice());
+        $this->assertEquals($productModel->price_in_cents, $product->getPriceInCents());
         $this->assertEquals($productModel->description, $product->getDescription());
         $this->assertEquals($productModel->created_at, $product->getCreatedAt()->format('Y-m-d H:i:s'));
         $this->assertEquals($productModel->updated_at, $product->getUpdatedAt()->format('Y-m-d H:i:s'));
@@ -48,7 +48,7 @@ class EloquentProductMapperTest extends TestCase
             $this->createProductModelMock(
                 id: 1,
                 name: 'product for test 2',
-                price: 10.99,
+                price_in_cents: 1099,
                 description: 'product description 2',
                 createdAt: Carbon::now(),
                 updatedAt: Carbon::now(),
@@ -56,7 +56,7 @@ class EloquentProductMapperTest extends TestCase
             $this->createProductModelMock(
                 id: 1,
                 name: 'product for test 3',
-                price: 10.99,
+                price_in_cents: 1099,
                 description: 'product description 3',
                 createdAt: Carbon::now(),
                 updatedAt: Carbon::now(),
@@ -64,7 +64,7 @@ class EloquentProductMapperTest extends TestCase
             $this->createProductModelMock(
                 id: 1,
                 name: 'product for test 4',
-                price: 10.99,
+                price_in_cents: 1099,
                 description: 'product description 4',
                 createdAt: Carbon::now(),
                 updatedAt: Carbon::now(),
@@ -84,7 +84,7 @@ class EloquentProductMapperTest extends TestCase
     private function createProductModelMock(
         int $id,
         string $name,
-        float $price,
+        int $price_in_cents,
         string $description,
         Carbon $createdAt,
         Carbon $updatedAt
@@ -97,12 +97,13 @@ class EloquentProductMapperTest extends TestCase
             ->getMock();
 
         $productModel->method('__get')
-            ->willReturnCallback(function ($property) use($id, $name, $price, $description, $createdAt, $updatedAt){
+            ->willReturnCallback(function ($property) use(
+                $id, $name, $price_in_cents, $description, $createdAt, $updatedAt){
 
                 return match ($property) {
                     'id' => $id,
                     'name' => $name,
-                    'price' => $price,
+                    'price_in_cents' => $price_in_cents,
                     'description' => $description,
                     'created_at' => $createdAt,
                     'updated_at' => $updatedAt

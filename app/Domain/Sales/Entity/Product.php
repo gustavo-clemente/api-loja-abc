@@ -10,37 +10,47 @@ use DateTime;
 class Product implements \JsonSerializable
 {
     public function __construct(
-        private ?ProductId $id,
-        private string $name,
-        private float $price,
-        private string $description,
-        private ?DateTime $createdAt = new DateTime(),
+        private ?ProductId $id = null,
+        private ?string $name = null,
+        private ?int $priceInCents = null,
+        private ?string $description = null,
+        private ?DateTime $createdAt = null,
         private ?DateTime $updateAt = null
     ) {
         
     }
 
-    public function getId(): ProductId
+    public function getId(): ?ProductId
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getPrice(): float
+    public function getPriceInCents(): ?int
     {
-        return $this->price;
+        return $this->priceInCents;
     }
 
-    public function getDescription(): string
+    public function getPriceInReal(): ?float
+    {
+        if(!is_null($this->priceInCents)){
+            return null;
+        }
+
+        return $this->priceInCents /100;
+
+    }
+
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
@@ -55,9 +65,9 @@ class Product implements \JsonSerializable
         return [
             "id"=> $this->getId()->getIdentifier(),
             "name"=> $this->getName(),
-            "price"=> $this->getPrice(),
+            "price"=> $this->getPriceInReal(),
             "description"=> $this->getDescription(),
-            "createdAt" => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            "createdAt" => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
             "updatedAt" => $this->getUpdatedAt()?->format('Y-m-d H:i:s')
         ];
     }

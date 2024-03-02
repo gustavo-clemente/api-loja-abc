@@ -14,8 +14,7 @@ class OrderItem
     public function __construct(
         private ?OrderItemId $id,
         private ?OrderId $orderId,
-        private ProductId $productId,
-        private ?float $price,
+        private Product $product,
         private int $quantity,
         private ?DateTime $createdAt = null,
         private ?DateTime $updatedAt = null,
@@ -32,26 +31,9 @@ class OrderItem
         return $this->orderId;
     }
 
-    public function getProductId(): ProductId
+    public function getProduct(): Product
     {
-        return $this->productId;
-    }
-
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function getPriceInCents(): int
-    {
-        return (int) round($this->price * 100);
-    }
-
-    public function setPrice(float $price): OrderItem
-    {
-        $this->price = $price;
-
-        return $this;
+        return $this->product;
     }
 
     public function getQuantity(): float

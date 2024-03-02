@@ -21,7 +21,7 @@ class ProductFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'price' => $this->faker->randomFloat(2,1,99999.99),
+            'price_in_cents' => $this->faker->numberBetween(100, 9999900),
             'description' => $this->faker->text,
         ];
     }

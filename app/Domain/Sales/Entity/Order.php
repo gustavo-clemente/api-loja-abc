@@ -30,12 +30,12 @@ class Order
         return $this->orderItems;
     }
 
-    public function getTotalAmount(): float
+    public function getTotalAmountInReal(): float
     {
         $totalAmountInCents = 0;
 
         foreach($this->orderItems->getItems() as $orderItem){
-            $totalAmountInCents += ($orderItem->getQuantity() * $orderItem->getPriceInCents()) ;
+            $totalAmountInCents += ($orderItem->getQuantity() * $orderItem->getProduct()->getPriceInCents()) ;
         }
 
         return $totalAmountInCents / 100;

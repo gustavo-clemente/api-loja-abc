@@ -9,7 +9,6 @@ use App\Domain\Sales\Entity\ProductCollection;
 use App\Domain\Sales\ValueObject\ProductId;
 use App\Infrastructure\Sales\Model\ProductModel;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Date;
 
 class EloquentProductMapper
 {
@@ -18,7 +17,7 @@ class EloquentProductMapper
         return new Product(
             id: new ProductId((string)$productModel->id),
             name: $productModel->name,
-            price: (float)$productModel->price,
+            priceInCents: $productModel->price_in_cents,
             description: $productModel->description,
             createdAt: new \DateTime($productModel->created_at->toDateTimeString()),
             updateAt: new \Datetime($productModel->updated_at->toDateTimeString()),

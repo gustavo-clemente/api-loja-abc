@@ -7,6 +7,7 @@ namespace Tests\Unit\Domain\Sales\Service;
 use App\Domain\Sales\Entity\Order;
 use App\Domain\Sales\Entity\OrderItem;
 use App\Domain\Sales\Entity\OrderItemsCollection;
+use App\Domain\Sales\Entity\Product;
 use App\Domain\Sales\Exception\EmptyOrderException;
 use App\Domain\Sales\Exception\InvalidOrderItemQuantityException;
 use App\Domain\Sales\Repository\OrderRepository;
@@ -26,8 +27,9 @@ class OrderServiceTest extends TestCase
                 new OrderItem(
                     id: null,
                     orderId: null,
-                    productId: new ProductId("1"),
-                    price: null,
+                    product: new Product(
+                        id: new ProductId("1"),
+                    ),
                     quantity:2,
 
                 )
@@ -94,8 +96,12 @@ class OrderServiceTest extends TestCase
                     new OrderItem(
                         id: null,
                         orderId: null,
-                        productId: new ProductId("1"),
-                        price: null,
+                        product: new Product(
+                            id: null,
+                            name: 'p1',
+                            priceInCents: null,
+                            description: ''
+                        ),
                         quantity:2,
     
                     ),
@@ -103,8 +109,12 @@ class OrderServiceTest extends TestCase
                     new OrderItem(
                         id: null,
                         orderId: null,
-                        productId: new ProductId("3"),
-                        price: null,
+                        product: new Product(
+                            id: null,
+                            name: 'p2',
+                            priceInCents: null,
+                            description: ''
+                        ),
                         quantity:2,
     
                     ),
@@ -112,8 +122,12 @@ class OrderServiceTest extends TestCase
                     new OrderItem(
                         id: null,
                         orderId: null,
-                        productId: new ProductId("3"),
-                        price: null,
+                        product: new Product(
+                            id: null,
+                            name: 'p3',
+                            priceInCents: null,
+                            description: ''
+                        ),
                         quantity:0,
     
                     ),
@@ -125,8 +139,12 @@ class OrderServiceTest extends TestCase
                     new OrderItem(
                         id: null,
                         orderId: null,
-                        productId: new ProductId("1"),
-                        price: null,
+                        product: new Product(
+                            id: null,
+                            name: 'p4',
+                            priceInCents: null,
+                            description: ''
+                        ),
                         quantity:2,
     
                     ),
@@ -134,8 +152,12 @@ class OrderServiceTest extends TestCase
                     new OrderItem(
                         id: null,
                         orderId: null,
-                        productId: new ProductId("3"),
-                        price: null,
+                        product: new Product(
+                            id: null,
+                            name: 'p5',
+                            priceInCents: null,
+                            description: ''
+                        ),
                         quantity:-1,
     
                     ),
@@ -143,8 +165,12 @@ class OrderServiceTest extends TestCase
                     new OrderItem(
                         id: null,
                         orderId: null,
-                        productId: new ProductId("3"),
-                        price: null,
+                        product: new Product(
+                            id: null,
+                            name: 'p6',
+                            priceInCents: null,
+                            description: ''
+                        ),
                         quantity:1,
     
                     ),
