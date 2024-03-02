@@ -10,7 +10,7 @@ use App\Domain\Sales\Exception\OrderWithDuplicateProductEntyException;
 use App\Domain\Sales\ValueObject\OrderId;
 use DateTime;
 
-class Order
+class Order implements \JsonSerializable
 {
     public function __construct(
         private ?OrderId $id = null,
@@ -97,5 +97,14 @@ class Order
 
             $productItemsIds[] = $productIdentifier;
         }
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getOrderId()->getIdentifier(),
+            'amount' => $this->getTotalAmountInReal(),
+            'products' => $this->orderItems->jsonSerialize()
+        ];
     }
 }

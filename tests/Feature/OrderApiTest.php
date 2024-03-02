@@ -4,7 +4,10 @@ declare(strict_types= 1);
 
 namespace Tests\Feature;
 
+use App\Infrastructure\Sales\Model\OrderItemModel;
+use App\Infrastructure\Sales\Model\OrderModel;
 use App\Infrastructure\Sales\Model\ProductModel;
+use Database\Factories\Sales\OrderItemFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Symfony\Component\HttpFoundation\Response;
@@ -135,6 +138,51 @@ class OrderApiTest extends TestCase
             ]
 
         ];
+    }
+
+    public function testGetOrderReturnsAllOrders(): void
+    {
+        $productModel = ProductModel::factory()->createOne();
+
+        $orderModels = OrderModel::factory(5)->create();
+
+        foreach ($orderModels as $order) {
+            OrderItemModel::factory()->create([
+                'product_id' => $productModel->id,
+                'order_id' => $order->id
+            ]);
+        }
+
+        $response = $this->getJson('/api/order');
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn(AssertableJson $json) => 
+              $json->has(
+                'items',
+                5,
+                fn(AssertableJson $json) =>
+                  $json->hasAll([
+                     'id',
+                     'amount',
+                     'products'
+                  ])
+                    ->has(
+                        'products',
+                        1,
+                        fn(AssertableJson $json) =>
+                          $json->hasAll([
+                            'id',
+                            'orderId',
+                            'productId',
+                            'name',
+                            'price',
+                            'quantity'
+                          ])->etc()
+                    )->etc()
+                )
+            );
     }
 
 }

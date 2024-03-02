@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Sales\Service;
 
 use App\Domain\Sales\Entity\Order;
+use App\Domain\Sales\Entity\OrderCollection;
 use App\Domain\Sales\Repository\OrderRepository;
 use App\Domain\Sales\ValueObject\OrderId;
 use Exception;
@@ -23,10 +24,9 @@ class OrderService
         return $this->orderRepository->createOrder($order);
     }
 
-    /** @return Order[] */
-    public function getAllOrders(): array
+    public function getAllOrders(): OrderCollection
     {
-        throw new Exception('Not Implemented');
+        return $this->orderRepository->findAll();
     }
 
     public function getOrderById(OrderId $orderId): Order

@@ -15,7 +15,7 @@ class Product implements \JsonSerializable
         private ?int $priceInCents = null,
         private ?string $description = null,
         private ?DateTime $createdAt = null,
-        private ?DateTime $updateAt = null
+        private ?DateTime $updatedAt = null
     ) {
         
     }
@@ -37,7 +37,7 @@ class Product implements \JsonSerializable
 
     public function getPriceInReal(): ?float
     {
-        if(!is_null($this->priceInCents)){
+        if(is_null($this->priceInCents)){
             return null;
         }
 
@@ -57,7 +57,7 @@ class Product implements \JsonSerializable
 
     public function getUpdatedAt(): ?DateTime
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
     public function jsonSerialize(): array

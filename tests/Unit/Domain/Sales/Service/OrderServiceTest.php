@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Domain\Sales\Service;
 
 use App\Domain\Sales\Entity\Order;
+use App\Domain\Sales\Entity\OrderCollection;
 use App\Domain\Sales\Entity\OrderItem;
 use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Entity\Product;
@@ -132,6 +133,20 @@ class OrderServiceTest extends TestCase
         );
 
         app(OrderService::class)->createOrder($orderForTest);
+    }
+
+    public function testGetAllOrdersReturnsOrderCollection(): void
+    {
+        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
+            $mock
+            ->shouldReceive("findAll")
+            ->once()
+            ->andReturn(new OrderCollection([]));
+        });
+
+        $orders = app(OrderService::class)->getAllOrders();
+
+        $this->assertInstanceOf(OrderCollection::class, $orders);
     }
 
     public static function dataProviderForTestOrderItemLessThanZero(): array

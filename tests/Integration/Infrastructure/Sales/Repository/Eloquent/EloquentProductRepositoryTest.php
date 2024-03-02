@@ -8,7 +8,6 @@ use App\Domain\Sales\Entity\ProductCollection;
 use App\Infrastructure\Sales\Model\ProductModel;
 use App\Infrastructure\Sales\Repository\Eloquent\EloquentProductRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PhpParser\Node\Expr\FuncCall;
 use Tests\TestCase;
 
 class EloquentProductRepositoryTest extends TestCase

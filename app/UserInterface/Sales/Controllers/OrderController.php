@@ -18,6 +18,12 @@ class OrderController extends Controller
     ) {
 
     }
+
+    public function index(): JsonResponse
+    {
+        $output = $this->orderApplication->getAll();
+        return new JsonResponse($output->jsonSerialize());
+    }
     public function store(CreateOrderRequest $request): JsonResponse
     {
         $inputCreateOrder = new CreateOrderInput($request->toArray());

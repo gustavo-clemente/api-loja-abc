@@ -24,7 +24,7 @@ class ProductApplicationTest extends TestCase
                 priceInCents: 500000,
                 description: 'Product 1 Description',
                 createdAt: new \DateTime('2024-01-01 14:30:00'),
-                updateAt: new \DateTime('2024-01-02 14:30:00'),
+                updatedAt: new \DateTime('2024-01-02 14:30:00'),
             ),
             new Product(
                 id: new ProductId('2'),

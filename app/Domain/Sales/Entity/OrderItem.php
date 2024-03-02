@@ -9,7 +9,7 @@ use App\Domain\Sales\ValueObject\OrderItemId;
 use App\Domain\Sales\ValueObject\ProductId;
 use DateTime;
 
-class OrderItem
+class OrderItem implements \JsonSerializable
 {
     public function __construct(
         private ?OrderItemId $id = null,
@@ -49,6 +49,18 @@ class OrderItem
     public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getOrderItemId()->getIdentifier(),
+            'orderId' => $this->getOrderId()->getIdentifier(),
+            'productId' => $this->getProduct()->getId()->getIdentifier(),
+            'name' => $this->getProduct()->getName(),
+            'price' => $this->getProduct()->getPriceInReal(),
+            'quantity' => $this->getQuantity(),
+        ];
     }
 
 }

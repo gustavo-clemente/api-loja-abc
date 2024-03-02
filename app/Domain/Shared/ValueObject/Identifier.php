@@ -7,12 +7,12 @@ namespace App\Domain\Shared\ValueObject;
 abstract class Identifier
 {
     public function __construct(
-        private string $identifier
+        private string|int $identifier
     ) {
         
     }
 
-    public function getIdentifier(): string
+    public function getIdentifier(): string|int
     {
         return $this->identifier;
     }

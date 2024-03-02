@@ -20,7 +20,7 @@ class EloquentProductMapper
             priceInCents: $productModel->price_in_cents,
             description: $productModel->description,
             createdAt: new \DateTime($productModel->created_at->toDateTimeString()),
-            updateAt: new \Datetime($productModel->updated_at->toDateTimeString()),
+            updatedAt: new \Datetime($productModel->updated_at->toDateTimeString()),
         );
     }
 

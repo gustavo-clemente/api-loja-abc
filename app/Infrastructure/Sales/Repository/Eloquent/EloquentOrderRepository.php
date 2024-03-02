@@ -10,13 +10,23 @@ use App\Domain\Sales\Entity\OrderItem;
 use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Repository\OrderRepository;
 use App\Domain\Sales\ValueObject\OrderId;
+use App\Domain\Sales\ValueObject\OrderItemId;
+use App\Infrastructure\Sales\Mapper\EloquentOrderMapper;
+use App\Infrastructure\Sales\Mapper\EloquentProductMapper;
 use App\Infrastructure\Sales\Model\OrderItemModel;
 use App\Infrastructure\Sales\Model\OrderModel;
 use App\Infrastructure\Sales\Model\ProductModel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EloquentOrderRepository implements OrderRepository
 {
+    public function __construct(
+        private EloquentProductMapper $productMapper,
+        private EloquentOrderMapper $orderMapper
+    ) {
+
+    }
     public function createOrder(Order $order): OrderId
     {
         DB::beginTransaction();
@@ -29,7 +39,9 @@ class EloquentOrderRepository implements OrderRepository
             $orderItemsModels[] = [
                 "order_id" => $orderModel->id,
                 "product_id" => $orderItem->getProduct()->getId()->getIdentifier(),
-                "quantity" => $orderItem->getQuantity()
+                "quantity" => $orderItem->getQuantity(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ];
         }
 
@@ -40,6 +52,12 @@ class EloquentOrderRepository implements OrderRepository
         return new OrderId((string)$orderModel->id);
     }
 
+    public function findAll(): OrderCollection
+    {
+        $ordersModel = OrderModel::with(['items', 'items.product'])->get();
+
+        return $this->orderMapper->mapToDomainCollection($ordersModel);
+    }
     public function addOrderItems(OrderItemsCollection $orderItems): Order
     {
         throw new \Exception("Not Implemented");
@@ -50,10 +68,6 @@ class EloquentOrderRepository implements OrderRepository
         throw new \Exception("Not Implemented");
     }
 
-    public function findAll(): OrderCollection
-    {
-        throw new \Exception("Not implemented");
-    }
 
     public function findById(OrderId $orderId): ?Order
     {

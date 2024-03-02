@@ -7,8 +7,17 @@ namespace Tests\Unit\Application\Sales;
 use App\Application\Sales\Input\CreateOrderInput;
 use App\Application\Sales\OrderApplication;
 use App\Application\Sales\Output\CreateOrderOutput;
+use App\Application\Sales\Output\FindAllOrdersOutput;
+use App\Domain\Sales\Entity\Order;
+use App\Domain\Sales\Entity\OrderCollection;
+use App\Domain\Sales\Entity\OrderItem;
+use App\Domain\Sales\Entity\OrderItemsCollection;
+use App\Domain\Sales\Entity\Product;
 use App\Domain\Sales\Service\OrderService;
 use App\Domain\Sales\ValueObject\OrderId;
+use App\Domain\Sales\ValueObject\OrderItemId;
+use App\Domain\Sales\ValueObject\ProductId;
+use DateTime;
 use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -28,11 +37,11 @@ class OrderApplicationTest extends TestCase
 
         $orderId = new OrderId('1');
 
-        $this->mock(OrderService::class, function (MockInterface $mock) use($orderId){
+        $this->mock(OrderService::class, function (MockInterface $mock) use ($orderId) {
             $mock
-              ->shouldReceive("createOrder")
-              ->once()
-              ->andReturn($orderId);
+                ->shouldReceive("createOrder")
+                ->once()
+                ->andReturn($orderId);
         });
 
         $output = app(OrderApplication::class)->createOrder($inputCreateOrder);
@@ -46,5 +55,66 @@ class OrderApplicationTest extends TestCase
         $this->assertArrayHasKey('id', $outputSerialized);
         $this->assertEquals(Response::HTTP_CREATED, $outputSerialized['status']);
         $this->assertEquals($orderId->getIdentifier(), $outputSerialized['id']);
+    }
+
+    public function testGetAllReturnsCorrectOutput(): void
+    {
+        $ordersToBeGenerate = 2;
+        $orderCollection = $this->generateOrderCollectionForTest(ordersToBeGenerate: $ordersToBeGenerate);
+
+        $this->mock(OrderService::class, function (MockInterface $mock) use ($orderCollection) {
+            $mock
+                ->shouldReceive('getAllOrders')
+                ->once()
+                ->andReturn($orderCollection);
+        });
+
+        $output = app(OrderApplication::class)->getAll();
+
+        $orderForAsserts = $orderCollection->getItems()[0];
+
+        $this->assertInstanceOf(FindAllOrdersOutput::class, $output);
+        $outputSerialized = $output->jsonSerialize();
+
+        $this->assertArrayHasKey('items', $outputSerialized);
+        $this->assertCount($ordersToBeGenerate, $outputSerialized['items']);
+
+        $outputItemForAsserts = $outputSerialized['items'][0];
+
+        $this->assertEquals($orderForAsserts->getOrderId()->getIdentifier(), $outputItemForAsserts['id']);
+        $this->assertEquals($orderForAsserts->getTotalAmountInReal(), $outputItemForAsserts['amount']);
+
+        $this->assertCount(count($orderForAsserts->getOrderItems()->getItems()), $outputItemForAsserts['products']);
+    }
+
+    private function generateOrderCollectionForTest(int $ordersToBeGenerate = 1): OrderCollection
+    {
+        $orders = [];
+
+        for ($i = 0; $i < $ordersToBeGenerate; $i++) {
+            $orders[] = new Order(
+                id: new OrderId((string) $i),
+                orderItems: new OrderItemsCollection([
+                    new OrderItem(
+                        id: new OrderItemId((string) $i),
+                        orderId: new OrderId((string) $i),
+                        product: new Product(
+                            id: new ProductId((string) $i),
+                            name: (string) $i,
+                            priceInCents: 500000,
+                            description: '',
+                            createdAt: new DateTime(),
+                            updatedAt: new DateTime(),
+
+                        ),
+                        quantity: 2,
+                        createdAt: new DateTime(),
+                        updatedAt: new DateTime(),
+                    )
+                ])
+            );
+        }
+
+        return new OrderCollection($orders);
     }
 }
