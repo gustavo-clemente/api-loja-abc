@@ -106,17 +106,13 @@ Se preferir, pode ser mais prático realizar a instalação utilizando o docker 
     ```bash
     docker-compose up -d
     ```
-4. Gere uma nova chave de aplicativo dentro do container
-    ```bash
-    docker exec api-abc php artisan key:generate
-    ```
 
-5. Execute as migrações do banco de dados:
+4. Execute as migrações do banco de dados:
     
     ```bash
     docker exec api-abc php artisan migrate
     ```
-6. Execute as seeds para popular o banco com os dados iniciais para teste:
+5. Execute as seeds para popular o banco com os dados iniciais para teste:
 
     ```bash
     docker exec api-abc php artisan db:seed

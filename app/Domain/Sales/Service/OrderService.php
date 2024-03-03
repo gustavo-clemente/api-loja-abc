@@ -10,7 +10,6 @@ use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Exception\OrderNotFoundException;
 use App\Domain\Sales\Repository\OrderRepository;
 use App\Domain\Sales\ValueObject\OrderId;
-use Symfony\Component\HttpFoundation\Response;
 
 class OrderService
 {
@@ -36,7 +35,7 @@ class OrderService
         $order = $this->orderRepository->findById($orderId);
 
         if(is_null($order)){
-            throw new OrderNotFoundException("Order id not found", Response::HTTP_NOT_FOUND);
+            throw new OrderNotFoundException();
         }
 
         return $order;
@@ -47,7 +46,7 @@ class OrderService
         $orderId = $this->orderRepository->cancelOrder($orderId);
 
         if(is_null($orderId)){
-            throw new OrderNotFoundException("Order id not found", Response::HTTP_NOT_FOUND);
+            throw new OrderNotFoundException();
         }
         
         
@@ -61,7 +60,7 @@ class OrderService
         $updatedOrder = $this->orderRepository->addOrderItems($orderId, $orderItems);
 
         if(is_null($updatedOrder)){
-            throw new OrderNotFoundException("Order id not found", Response::HTTP_NOT_FOUND);
+            throw new OrderNotFoundException();
         }
         
         return $updatedOrder;

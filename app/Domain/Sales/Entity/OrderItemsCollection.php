@@ -54,7 +54,7 @@ class OrderItemsCollection extends Collection implements \JsonSerializable
 
             if(in_array($productIdentifier, $productItemsIds)){
                 throw new OrderWithDuplicateProductEntyException(
-                    "An order should not contain multiple order items with the same product ID. 
+                    "An order should not contain multiple order items with the same product ID.
                     Please specify the quantity for each item",
                     422
                 );
