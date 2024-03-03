@@ -15,11 +15,11 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
-        \App\infrastructure\Laravel\Http\Middleware\TrustProxies::class,
+        \App\Infrastructure\Laravel\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
-        \App\infrastructure\Laravel\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \App\Infrastructure\Laravel\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\infrastructure\Laravel\Http\Middleware\TrimStrings::class,
+        \App\Infrastructure\Laravel\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
