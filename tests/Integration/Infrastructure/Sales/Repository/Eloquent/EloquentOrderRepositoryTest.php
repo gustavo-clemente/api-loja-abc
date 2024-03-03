@@ -9,6 +9,7 @@ use App\Domain\Sales\Entity\OrderCollection;
 use App\Domain\Sales\Entity\OrderItem;
 use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Entity\Product;
+use App\Domain\Sales\Exception\OrderWithDuplicateProductEntyException;
 use App\Domain\Sales\ValueObject\OrderId;
 use App\Domain\Sales\ValueObject\ProductId;
 use App\Infrastructure\Sales\Model\OrderItemModel;
@@ -214,5 +215,113 @@ class EloquentOrderRepositoryTest extends TestCase
 
         $this->assertNull($orderId);
 
+    }
+
+    public function testAddOrderItemSaveNewOrderItemsOnDatabase(): void
+    {
+        $orderModel = OrderModel::factory()->createOne();
+        $productModel = ProductModel::factory(4)->create()->toArray();
+
+        OrderItemModel::factory()->createMany([
+            [
+                'order_id' => $orderModel->id,
+                'product_id' => $productModel[0]['id'],
+            ],
+            [
+                'order_id' => $orderModel->id,
+                'product_id' => $productModel[1]['id'],
+            ]
+            
+        ]);
+
+        $orderId = new OrderId($orderModel->id);
+        $orderItemCollection = new OrderItemsCollection([
+            new OrderItem(
+                orderId: $orderId,
+                product: new Product(
+                    id: new ProductId($productModel[2]['id']),
+                ),
+                quantity: 2
+            ),
+            new OrderItem(
+                orderId: $orderId,
+                product: new Product(
+                    id: new ProductId($productModel[3]['id']),
+                ),
+                quantity: 2
+            ),
+        ]);
+
+        $order = app(EloquentOrderRepository::class)->addOrderItems($orderId, $orderItemCollection);
+
+        $this->assertInstanceOf(Order::class, $order);
+
+        $this->assertCount(4, $order->getOrderItems()->getItems());
+
+        $this->assertDatabaseCount('order_items',4);
+
+        $this->assertDatabaseHas('order_items', [
+            'order_id' => $orderId->getIdentifier(),
+            'product_id' => $productModel[2]['id']
+        ]);
+
+        $this->assertDatabaseHas('order_items', [
+            'order_id' => $orderId->getIdentifier(),
+            'product_id' => $productModel[3]['id']
+        ]);
+    }
+
+    public function testAddOrderItemReturnNullWhenIdNotFound(): void
+    {
+        $orderId = new OrderId('0');
+        $orderItemCollection = new OrderItemsCollection([]);
+
+        $order = app(EloquentOrderRepository::class)->addOrderItems($orderId, $orderItemCollection);
+
+        $this->assertNull($order);
+    }
+
+    public function testAddOrderItemThrowWhenDuplicateProduct(): void
+    {
+        $this->expectException(OrderWithDuplicateProductEntyException::class);
+        $orderModel = OrderModel::factory()->createOne();
+        $productModel = ProductModel::factory(3)->create()->toArray();
+
+        OrderItemModel::factory()->createMany([
+            [
+                'order_id' => $orderModel->id,
+                'product_id' => $productModel[0]['id'],
+                'quantity' => 10
+            ],
+            [
+                'order_id' => $orderModel->id,
+                'product_id' => $productModel[1]['id'],
+                'quantity' => 10
+            ]
+            
+        ]);
+
+        $orderId = new OrderId($orderModel->id);
+        $orderItemCollection = new OrderItemsCollection([
+            new OrderItem(
+                orderId: $orderId,
+                product: new Product(
+                    id: new ProductId($productModel[1]['id']),
+                ),
+                quantity: 2
+            ),
+            new OrderItem(
+                orderId: $orderId,
+                product: new Product(
+                    id: new ProductId($productModel[2]['id']),
+                ),
+                quantity: 2
+            ),
+        ]);
+
+        app(EloquentOrderRepository::class)->addOrderItems($orderId, $orderItemCollection);
+
+
+        $this->assertDatabaseCount('order_items',2);
     }
 }

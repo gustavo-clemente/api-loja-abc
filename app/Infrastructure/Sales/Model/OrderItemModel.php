@@ -17,9 +17,12 @@ class OrderItemModel extends Model
     protected $table = "order_items";
 
     protected $fillable = [
+        'order_id',
         'product_id',
         'quantity',
-        'price'
+        'price',
+        'created_at',
+        'updated_at'
     ];
 
     public $incrementing = true;

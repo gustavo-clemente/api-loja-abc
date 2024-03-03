@@ -1,9 +1,10 @@
 <?php
 
-declare(strict_types= 1);
+declare(strict_types=1);
 
 namespace Tests\Feature\Sales;
 
+use App\Domain\Sales\ValueObject\OrderId;
 use App\Infrastructure\Sales\Model\OrderItemModel;
 use App\Infrastructure\Sales\Model\OrderModel;
 use App\Infrastructure\Sales\Model\ProductModel;
@@ -54,9 +55,9 @@ class OrderApiTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED);
 
         $response->assertJson(
-            fn(AssertableJson $json) => 
-              $json->hasAll(['status', 'id'])
-            );
+            fn (AssertableJson $json) =>
+            $json->hasAll(['status', 'id'])
+        );
         $responseJson = $response->json();
 
 
@@ -74,8 +75,6 @@ class OrderApiTest extends TestCase
             "order_id" => $responseJson['id'],
             "product_id" => $productsModels[2]->id
         ]);
-        
-    
     }
 
     /**
@@ -88,8 +87,8 @@ class OrderApiTest extends TestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson(
-            fn(AssertableJson $json) =>
-              $json->hasAll(["message", "errors"])
+            fn (AssertableJson $json) =>
+            $json->hasAll(["message", "errors"])
         );
     }
 
@@ -108,17 +107,17 @@ class OrderApiTest extends TestCase
 
             'without id in one item' => [
                 [
-                    'items'=> [
+                    'items' => [
                         [
-                            'id'=> 1,
-                            'quantity'=> 1,
+                            'id' => 1,
+                            'quantity' => 1,
                         ],
                         [
-                            'id'=> 2,
-                            'quantity'=> 1,
+                            'id' => 2,
+                            'quantity' => 1,
                         ],
                         [
-                            'quantity'=> 1,
+                            'quantity' => 1,
                         ]
                     ]
                 ]
@@ -126,15 +125,15 @@ class OrderApiTest extends TestCase
 
             'without quantity in one item' => [
                 [
-                    'id'=> 2,
-                    'quantity'=> 1,
+                    'id' => 2,
+                    'quantity' => 1,
                 ],
                 [
-                    'id'=> 2,
-                    'quantity'=> 1,
+                    'id' => 2,
+                    'quantity' => 1,
                 ],
                 [
-                    'id'=> 2
+                    'id' => 2
                 ]
             ]
 
@@ -159,31 +158,31 @@ class OrderApiTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson(
-            fn(AssertableJson $json) => 
-              $json->has(
+            fn (AssertableJson $json) =>
+            $json->has(
                 'items',
                 5,
-                fn(AssertableJson $json) =>
-                  $json->hasAll([
-                     'id',
-                     'amount',
-                     'products'
-                  ])
+                fn (AssertableJson $json) =>
+                $json->hasAll([
+                    'id',
+                    'amount',
+                    'products'
+                ])
                     ->has(
                         'products',
                         1,
-                        fn(AssertableJson $json) =>
-                          $json->hasAll([
+                        fn (AssertableJson $json) =>
+                        $json->hasAll([
                             'id',
                             'orderId',
                             'productId',
                             'name',
                             'price',
                             'quantity'
-                          ])->etc()
+                        ])->etc()
                     )->etc()
-                )
-            );
+            )
+        );
     }
 
     public function testGetOrderByIdReturnOrder(): void
@@ -230,9 +229,8 @@ class OrderApiTest extends TestCase
                 ]
             ]
         ]);
-
     }
-    
+
     public function testGetOrderByIdReturn404WhenNotFound(): void
     {
         $baseUrl = self::BASE_URL;
@@ -242,8 +240,8 @@ class OrderApiTest extends TestCase
         $response->assertStatus(Response::HTTP_NOT_FOUND);
 
         $response->assertJson(
-            fn(AssertableJson $json) =>
-              $json->hasAll(['status','message'])
+            fn (AssertableJson $json) =>
+            $json->hasAll(['status', 'message'])
         );
     }
 
@@ -277,10 +275,9 @@ class OrderApiTest extends TestCase
             'id' => $orderModelId
         ]);
 
-        $this->assertDatabaseMissing('order_items',[
+        $this->assertDatabaseMissing('order_items', [
             'order_id' => $orderModelId
         ]);
-
     }
 
     public function testDeleteOrderReturn404WhenNotFound(): void
@@ -292,8 +289,179 @@ class OrderApiTest extends TestCase
         $response->assertStatus(Response::HTTP_NOT_FOUND);
 
         $response->assertJson(
-            fn(AssertableJson $json) =>
-              $json->hasAll(['status','message'])
+            fn (AssertableJson $json) =>
+            $json->hasAll(['status', 'message'])
         );
+    }
+
+    public function testUpdateOrderReturnUpdatedOrder(): void
+    {
+        $orderModel = OrderModel::factory()->createOne();
+        $productModel = ProductModel::factory(4)->create()->toArray();
+        $orderModelId = $orderModel->id;
+
+        OrderItemModel::factory()->createMany([
+            [
+                'order_id' => $orderModelId,
+                'product_id' => $productModel[0]['id'],
+            ],
+            [
+                'order_id' => $orderModelId,
+                'product_id' => $productModel[1]['id'],
+            ]
+
+        ]);
+
+        $payload = [
+            "items" => [
+                [
+                    "id" => $productModel[2]['id'],
+                    "quantity" => 1
+                ],
+                [
+                    "id" => $productModel[3]['id'],
+                    "quantity" => 2,
+                ]
+            ]
+        ];
+
+        $baseUrl = self::BASE_URL;
+        $response = $this->patchJson("{$baseUrl}/{$orderModelId}", $payload);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->has(
+                'data',
+                fn (AssertableJson $json) =>
+                $json->hasAll([
+                    'id',
+                    'amount',
+                    'products'
+                ])
+                    ->has(
+                        'products',
+                        4,
+                        fn (AssertableJson $json) =>
+                        $json->hasAll([
+                            'id',
+                            'orderId',
+                            'productId',
+                            'name',
+                            'price',
+                            'quantity'
+                        ])->etc()
+                    )->etc()
+            )->etc()
+        );
+    }
+
+    public function testUpdateReturn404WhenNotFound(): void
+    {
+        $baseUrl = self::BASE_URL;
+
+        $payload = [
+            "items" => [
+                [
+                    "id" => 0,
+                    "quantity" => 1
+                ],
+                [
+                    "id" => 1,
+                    "quantity" => 2,
+                ]
+            ]
+        ];
+
+        $response = $this->patchJson("{$baseUrl}/0", $payload);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll(['status', 'message'])
+        );
+    }
+
+    /**
+     * @dataProvider providerForBusinessRuleViolationsTest
+     */
+    public function testUpdateReturnErrorWhenBusinessRuleViolation(array $payload, int $expectedErrorCode): void
+    {
+        $baseUrl = self::BASE_URL;
+
+        $response = $this->patchJson("{$baseUrl}/0", $payload);
+
+        $response->assertStatus($expectedErrorCode);
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll(['status', 'message'])
+        );
+    }
+
+    public static function providerForBusinessRuleViolationsTest(): array
+    {
+        return [
+            'item with quantity 0' => [
+                [
+                    "items" => [
+                        [
+                            "id" => 1,
+                            "quantity" => 1
+                        ],
+                        [
+                            "id" => 2,
+                            "quantity" => 2,
+                        ],
+                        [
+                            "id" => 2,
+                            "quantity" => 0,
+                        ]
+                    ]
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            ],
+
+            'item with negative quantity' => [
+                [
+                    "items" => [
+                        [
+                            "id" => 1,
+                            "quantity" => 1
+                        ],
+                        [
+                            "id" => 2,
+                            "quantity" => -6,
+                        ],
+                        [
+                            "id" => 2,
+                            "quantity" => 10,
+                        ]
+                    ]
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            ],
+            'item with duplicate product' => [
+                [
+                    "items" => [
+                        [
+                            "id" => 1,
+                            "quantity" => 1
+                        ],
+                        [
+                            "id" => 2,
+                            "quantity" => 10,
+                        ],
+                        [
+                            "id" => 1,
+                            "quantity" => 10,
+                        ]
+                    ]
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            ]
+        ];
     }
 }

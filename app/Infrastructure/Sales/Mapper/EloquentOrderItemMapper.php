@@ -9,6 +9,7 @@ use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\ValueObject\OrderId;
 use App\Domain\Sales\ValueObject\OrderItemId;
 use App\Infrastructure\Sales\Model\OrderItemModel;
+use App\Infrastructure\Sales\Model\OrderModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -39,5 +40,22 @@ class EloquentOrderItemMapper
         }
 
         return new OrderItemsCollection($orderItems);
+    }
+
+    public function mapToModelCollection(OrderModel $orderModel, OrderItemsCollection $orderItems): Collection
+    {
+        $orderItemsModels = [];
+
+        foreach($orderItems->getItems() as $orderItem){
+            $orderItemsModels[] = new OrderItemModel([
+                "order_id" => $orderModel->id,
+                "product_id" => $orderItem->getProduct()->getId()->getIdentifier(),
+                "quantity" => $orderItem->getQuantity(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
+
+        return new Collection($orderItemsModels);
     }
 }

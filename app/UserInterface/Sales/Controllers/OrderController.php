@@ -4,12 +4,14 @@ declare(strict_types= 1);
 
 namespace App\UserInterface\Sales\Controllers;
 
+use App\Application\Sales\Input\AddOrderItemsInput;
 use App\Application\Sales\Input\CancelOrderInput;
 use App\Application\Sales\Input\CreateOrderInput;
 use App\Application\Sales\Input\GetOrderByIdInput;
 use App\Application\Sales\OrderApplication;
 use App\Infrastructure\Laravel\Controller;
 use App\UserInterface\Sales\Request\CreateOrderRequest;
+use App\UserInterface\Sales\Request\UpdateOrderRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -49,6 +51,15 @@ class OrderController extends Controller
         $inputCancelOrder = new CancelOrderInput($id);
 
         $output = $this->orderApplication->cancelOrder($inputCancelOrder);
+
+        return new JsonResponse($output->jsonSerialize(), Response::HTTP_OK);
+    }
+
+    public function update(int $id, UpdateOrderRequest $request): JsonResponse
+    {
+        $inputAddOrderItem = new AddOrderItemsInput($id, $request->toArray());
+
+        $output = $this->orderApplication->addOrderItems($inputAddOrderItem);
 
         return new JsonResponse($output->jsonSerialize(), Response::HTTP_OK);
     }

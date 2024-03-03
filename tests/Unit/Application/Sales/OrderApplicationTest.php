@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Application\Sales;
 
+use App\Application\Sales\Input\AddOrderItemsInput;
 use App\Application\Sales\Input\CancelOrderInput;
 use App\Application\Sales\Input\CreateOrderInput;
 use App\Application\Sales\Input\GetOrderByIdInput;
 use App\Application\Sales\OrderApplication;
+use App\Application\Sales\Output\AddOrderItemsOutput;
 use App\Application\Sales\Output\CancelOrderOutput;
 use App\Application\Sales\Output\CreateOrderOutput;
 use App\Application\Sales\Output\FindAllOrdersOutput;
@@ -143,6 +145,33 @@ class OrderApplicationTest extends TestCase
         $output = app(OrderApplication::class)->cancelOrder($input);
 
         $this->assertInstanceOf(CancelOrderOutput::class, $output);
+    }
+
+    public function testAddOrderItemsReturnsCorrectOutput(): void
+    {
+        $order = new Order(
+            new OrderId('1'),
+        );
+
+        $this->mock(OrderService::class, function (MockInterface $mock) use ($order) {
+            $mock
+                ->shouldReceive('addOrderItems')
+                ->once()
+                ->andReturn($order);
+        });
+
+        $input = new AddOrderItemsInput('1',[
+            "items" => [
+                [
+                    "id" => 1,
+                    "quantity" => 1
+                ]
+            ]
+        ]);
+
+        $output = app(OrderApplication::class)->addOrderItems($input);
+
+        $this->assertInstanceOf(AddOrderItemsOutput::class, $output);
     }
 
     private function generateOrderCollectionForTest(int $ordersToBeGenerate = 1): OrderCollection

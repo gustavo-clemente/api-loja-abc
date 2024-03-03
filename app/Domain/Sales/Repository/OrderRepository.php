@@ -19,5 +19,5 @@ interface OrderRepository
 
     public function cancelOrder(OrderId $order): ?OrderId;
 
-    public function addOrderItems(OrderItemsCollection $orderItems): Order;
+    public function addOrderItems(OrderId $orderId, OrderItemsCollection $orderItems): ?Order;
 }

@@ -91,80 +91,6 @@ class OrderServiceTest extends TestCase
         app(OrderService::class)->createOrder($orderForTest);
     }
 
-    public static function dataProviderForTestOrderItemLessThanZero(): array
-    {
-        return [
-            'only a item with quantity zero' => [
-                [
-                    new OrderItem(
-                        id: null,
-                        orderId: null,
-                        product: new Product(
-                            id: new ProductId('1'),
-                        ),
-                        quantity:2,
-    
-                    ),
-
-                    new OrderItem(
-                        id: null,
-                        orderId: null,
-                        product: new Product(
-                            id: new ProductId('2'),
-                        ),
-                        quantity:2,
-    
-                    ),
-
-                    new OrderItem(
-                        id: null,
-                        orderId: null,
-                        product: new Product(
-                            id: new ProductId('3'),
-                        ),
-                        quantity:0,
-    
-                    ),
-                ]
-            ],
-
-            'only a item with quantity less that zero' => [
-                [
-                    new OrderItem(
-                        id: null,
-                        orderId: null,
-                        product: new Product(
-                            id: new ProductId('1'),
-                        ),
-                        quantity:2,
-    
-                    ),
-
-                    new OrderItem(
-                        id: null,
-                        orderId: null,
-                        product: new Product(
-                            id: new ProductId('2'),
-                        ),
-                        quantity:-1,
-    
-                    ),
-
-                    new OrderItem(
-                        id: null,
-                        orderId: null,
-                        product: new Product(
-                            id: new ProductId('3'),
-                        ),
-                        quantity:1,
-    
-                    ),
-                ]
-            ]
-
-        ];
-    }
-
     public function testCreateOrderThrowExceptionWhenHasDuplicateProductId(): void
     {
         $this->expectException(OrderWithDuplicateProductEntyException::class);
@@ -286,5 +212,172 @@ class OrderServiceTest extends TestCase
         $this->assertNull($orderIdReceived);
     }
 
+    public function testAddOrderItemsReturnsUpdatedOrder(): void
+    {
+        $orderItemsCollection = new OrderItemsCollection([
+            new OrderItem(
+                id: null,
+                orderId: null,
+                product: new Product(
+                    id: new ProductId("1"),
+                ),
+                quantity:2,
 
+            )
+        ]);
+
+        $orderForTest = new Order(
+            id: new OrderId('1'),
+            orderItems: $orderItemsCollection
+        );
+
+        $orderId = $orderForTest->getOrderId();
+
+        $this->mock(OrderRepository::class, function (MockInterface $mock) use($orderForTest): void {
+            $mock
+              ->shouldReceive("addOrderItems")
+              ->once()
+              ->andReturn($orderForTest);
+        });
+
+        $orderReturned = app(OrderService::class)->addOrderItems($orderId, $orderItemsCollection);
+
+        $this->assertInstanceOf(Order::class, $orderReturned);
+
+    }
+
+    public function testAddOrderItemsThrowExceptionWherOrderItemEmpty(): void
+    {
+        $this->expectException(EmptyOrderException::class);
+        $this->mock(OrderRepository::class, function (MockInterface $mock) {
+            $mock
+              ->shouldNotReceive("addOrderItems")
+            ;
+        });
+
+        $orderItems = new OrderItemsCollection([]);
+        $orderId = new OrderId("1");
+
+        app(OrderService::class)->addOrderItems($orderId, $orderItems);
+    }
+
+    /**
+     * @dataProvider dataProviderForTestOrderItemLessThanZero
+     * @param  OrderItem[] $orderItems
+     */
+    public function testAddOrderItemThrowExceptionWhenOrderItemQuantityLessThanZero(array $orderItems): void
+    {
+        $this->expectException(InvalidOrderItemQuantityException::class);
+        $this->mock(OrderRepository::class, function (MockInterface $mock) {
+            $mock
+              ->shouldNotReceive("addOrderItems")
+            ;
+        });
+
+        $orderId = new OrderId("1");
+        $orderItemsForTest = new OrderItemsCollection($orderItems);
+
+        app(OrderService::class)->addOrderItems($orderId, $orderItemsForTest);
+    }
+
+    public function testAddOrderItemThrowsWhenOrderNotFound(): void
+    {
+        $this->expectException(OrderNotFoundException::class);
+
+        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
+            $mock
+            ->shouldReceive("addOrderItems")
+            ->once()
+            ->andReturn(null);
+        });
+
+        $orderItemsCollection = new OrderItemsCollection([
+            new OrderItem(
+                id: null,
+                orderId: null,
+                product: new Product(
+                    id: new ProductId("1"),
+                ),
+                quantity:2,
+
+            )
+        ]);
+
+        $orderId = new OrderId("1");
+        app(OrderService::class)->addOrderItems($orderId, $orderItemsCollection);
+    }
+
+    public static function dataProviderForTestOrderItemLessThanZero(): array
+    {
+        return [
+            'only a item with quantity zero' => [
+                [
+                    new OrderItem(
+                        id: null,
+                        orderId: null,
+                        product: new Product(
+                            id: new ProductId('1'),
+                        ),
+                        quantity:2,
+    
+                    ),
+
+                    new OrderItem(
+                        id: null,
+                        orderId: null,
+                        product: new Product(
+                            id: new ProductId('2'),
+                        ),
+                        quantity:2,
+    
+                    ),
+
+                    new OrderItem(
+                        id: null,
+                        orderId: null,
+                        product: new Product(
+                            id: new ProductId('3'),
+                        ),
+                        quantity:0,
+    
+                    ),
+                ]
+            ],
+
+            'only a item with quantity less that zero' => [
+                [
+                    new OrderItem(
+                        id: null,
+                        orderId: null,
+                        product: new Product(
+                            id: new ProductId('1'),
+                        ),
+                        quantity:2,
+    
+                    ),
+
+                    new OrderItem(
+                        id: null,
+                        orderId: null,
+                        product: new Product(
+                            id: new ProductId('2'),
+                        ),
+                        quantity:-1,
+    
+                    ),
+
+                    new OrderItem(
+                        id: null,
+                        orderId: null,
+                        product: new Product(
+                            id: new ProductId('3'),
+                        ),
+                        quantity:1,
+    
+                    ),
+                ]
+            ]
+
+        ];
+    }
 }

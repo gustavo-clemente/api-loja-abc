@@ -36,7 +36,7 @@ class OrderItem implements \JsonSerializable
         return $this->product;
     }
 
-    public function getQuantity(): ?float
+    public function getQuantity(): ?int
     {
         return $this->quantity;
     }
@@ -54,7 +54,6 @@ class OrderItem implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'id' => $this->getOrderItemId()->getIdentifier(),
             'orderId' => $this->getOrderId()->getIdentifier(),
             'productId' => $this->getProduct()->getId()->getIdentifier(),
             'name' => $this->getProduct()->getName(),

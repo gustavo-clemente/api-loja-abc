@@ -7,7 +7,7 @@ namespace App\Application\Sales\Output;
 use App\Domain\Sales\Entity\Order;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetOrderByIdOutput implements \JsonSerializable
+class AddOrderItemsOutput implements \JsonSerializable
 {
     public function __construct(
         private Order $order
