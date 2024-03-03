@@ -22,6 +22,7 @@ A API foi desenvolvida utilizando as seguintes ferramentas e tecnologias:
 - [GitHub Actions](https://github.com/features/actions): Para automação de CI/CD.
 - [Docker](https://www.docker.com/): Para empacotamento e distribuição da aplicação em contêineres.
 - [Postman](https://www.postman.com/): Para teste e documentação das API's
+- [SonarCloud](https://www.sonarsource.com/products/sonarcloud/): Para analise de qualidade de código
 
 ## Instalação
 
