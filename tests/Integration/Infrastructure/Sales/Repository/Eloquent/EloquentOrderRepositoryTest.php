@@ -172,4 +172,47 @@ class EloquentOrderRepositoryTest extends TestCase
 
         $this->assertNull($order);
     }
+
+    public function testCancelOrderRemoveOrderAndItemsFromDatabase(): void
+    {
+        $productModel = ProductModel::factory()->createOne();
+        $orderModel = OrderModel::factory(10)->create();
+
+        $ordermodelToRemove = $orderModel->first();
+
+        foreach($orderModel as $order) {
+            OrderItemModel::factory(2)->create([
+                'order_id' => $order,
+                'product_id' => $productModel->id,
+            ]);
+        }
+
+
+        $orderId = new OrderId($ordermodelToRemove->id);
+
+        $orderId = app(EloquentOrderRepository::class)->cancelOrder($orderId);
+
+        $this->assertInstanceOf(OrderId::class, $orderId);
+
+        $this->assertDatabaseCount('orders', 9);
+        $this->assertDatabaseMissing('orders', [
+            'id' => $ordermodelToRemove->id
+        ]);
+
+        $this->assertDatabaseMissing('order_items',[
+            'order_id' => $ordermodelToRemove->id
+        ]);
+
+    }
+
+    public function testCancelOrderReturnNullWhenOrderNotFound(): void
+    {
+
+        $orderId = new OrderId('000');
+
+        $orderId = app(EloquentOrderRepository::class)->cancelOrder($orderId);
+
+        $this->assertNull($orderId);
+
+    }
 }

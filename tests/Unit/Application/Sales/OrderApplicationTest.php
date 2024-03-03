@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Application\Sales;
 
+use App\Application\Sales\Input\CancelOrderInput;
 use App\Application\Sales\Input\CreateOrderInput;
 use App\Application\Sales\Input\GetOrderByIdInput;
 use App\Application\Sales\OrderApplication;
+use App\Application\Sales\Output\CancelOrderOutput;
 use App\Application\Sales\Output\CreateOrderOutput;
 use App\Application\Sales\Output\FindAllOrdersOutput;
 use App\Application\Sales\Output\GetOrderByIdOutput;
@@ -124,6 +126,23 @@ class OrderApplicationTest extends TestCase
         $output = app(OrderApplication::class)->getById($input);
 
         $this->assertInstanceOf(GetOrderByIdOutput::class, $output);
+    }
+
+    public function testCancelOrderReturnsCorrectOutput(): void
+    {
+        $orderId = new OrderId('1');
+
+        $this->mock(OrderService::class, function (MockInterface $mock) use ($orderId) {
+            $mock
+                ->shouldReceive('cancelOrder')
+                ->once()
+                ->andReturn($orderId);
+        });
+
+        $input = new CancelOrderInput('1');
+        $output = app(OrderApplication::class)->cancelOrder($input);
+
+        $this->assertInstanceOf(CancelOrderOutput::class, $output);
     }
 
     private function generateOrderCollectionForTest(int $ordersToBeGenerate = 1): OrderCollection

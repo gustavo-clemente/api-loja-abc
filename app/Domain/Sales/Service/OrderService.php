@@ -43,9 +43,16 @@ class OrderService
         return $order;
     }
 
-    public function cancelOrder(OrderId $orderId): void
+    public function cancelOrder(OrderId $orderId): OrderId
     {
-        throw new Exception('Not Implemented');
+        $orderId = $this->orderRepository->cancelOrder($orderId);
+
+        if(is_null($orderId)){
+            throw new OrderNotFoundException("Order id not found", Response::HTTP_NOT_FOUND);
+        }
+        
+        
+        return $orderId;
     }
 
     /** @param OrderItem[] $orderItems*/

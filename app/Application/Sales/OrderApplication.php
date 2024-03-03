@@ -4,8 +4,10 @@ declare(strict_types= 1);
 
 namespace App\Application\Sales;
 
+use App\Application\Sales\Input\CancelOrderInput;
 use App\Application\Sales\Input\CreateOrderInput;
 use App\Application\Sales\Input\GetOrderByIdInput;
+use App\Application\Sales\Output\CancelOrderOutput;
 use App\Application\Sales\Output\CreateOrderOutput;
 use App\Application\Sales\Output\FindAllOrdersOutput;
 use App\Application\Sales\Output\GetOrderByIdOutput;
@@ -36,5 +38,12 @@ class OrderApplication
         $order = $this->orderService->getOrderById($getOrderByIdInput->getOrderId());
 
         return new GetOrderByIdOutput($order);
+    }
+
+    public function cancelOrder(CancelOrderInput $cancelOrderInput): CancelOrderOutput
+    {
+        $orderId = $this->orderService->cancelOrder($cancelOrderInput->getOrderId());
+
+        return new CancelOrderOutput($orderId);
     }
 }

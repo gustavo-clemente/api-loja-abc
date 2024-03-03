@@ -4,6 +4,7 @@ declare(strict_types= 1);
 
 namespace App\UserInterface\Sales\Controllers;
 
+use App\Application\Sales\Input\CancelOrderInput;
 use App\Application\Sales\Input\CreateOrderInput;
 use App\Application\Sales\Input\GetOrderByIdInput;
 use App\Application\Sales\OrderApplication;
@@ -39,6 +40,15 @@ class OrderController extends Controller
         $inputGetById = new GetOrderByIdInput($id);
 
         $output = $this->orderApplication->getById($inputGetById);
+
+        return new JsonResponse($output->jsonSerialize(), Response::HTTP_OK);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $inputCancelOrder = new CancelOrderInput($id);
+
+        $output = $this->orderApplication->cancelOrder($inputCancelOrder);
 
         return new JsonResponse($output->jsonSerialize(), Response::HTTP_OK);
     }

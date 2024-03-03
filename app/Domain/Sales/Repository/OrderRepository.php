@@ -17,7 +17,7 @@ interface OrderRepository
 
     public function findById(OrderId $orderId): ?Order;
 
-    public function cancelOrder(OrderId $order): bool;
+    public function cancelOrder(OrderId $order): ?OrderId;
 
     public function addOrderItems(OrderItemsCollection $orderItems): Order;
 }

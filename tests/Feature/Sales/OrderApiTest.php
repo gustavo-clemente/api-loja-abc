@@ -14,6 +14,8 @@ use Tests\TestCase;
 
 class OrderApiTest extends TestCase
 {
+    const BASE_URL = "/api/order";
+
     use RefreshDatabase;
 
     public function testPostOrderCreatesOrderWithItems(): void
@@ -47,7 +49,7 @@ class OrderApiTest extends TestCase
             ]
         ];
 
-        $response = $this->json("POST","/api/order", $payload);
+        $response = $this->postJson(self::BASE_URL, $payload);
 
         $response->assertStatus(Response::HTTP_CREATED);
 
@@ -81,7 +83,7 @@ class OrderApiTest extends TestCase
      */
     public function testPostOrderReturns422WhemPayloadIsInvalid(array $payload): void
     {
-        $response = $this->json("POST","/api/order", $payload);
+        $response = $this->postJson(self::BASE_URL, $payload);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
@@ -152,7 +154,7 @@ class OrderApiTest extends TestCase
             ]);
         }
 
-        $response = $this->getJson('/api/order');
+        $response = $this->getJson(self::BASE_URL);
 
         $response->assertStatus(200);
 
@@ -197,7 +199,9 @@ class OrderApiTest extends TestCase
             'order_id' => $orderModelId
         ]);
 
-        $response = $this->getJson("api/order/{$orderModelId}");
+        $baseUrl = self::BASE_URL;
+
+        $response = $this->getJson("{$baseUrl}/{$orderModelId}");
 
         $response->assertStatus(Response::HTTP_OK);
 
@@ -231,7 +235,59 @@ class OrderApiTest extends TestCase
     
     public function testGetOrderByIdReturn404WhenNotFound(): void
     {
-        $response = $this->getJson("api/order/0");
+        $baseUrl = self::BASE_URL;
+
+        $response = $this->getJson("{$baseUrl}/0");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+
+        $response->assertJson(
+            fn(AssertableJson $json) =>
+              $json->hasAll(['status','message'])
+        );
+    }
+
+    public function testDeleteOrderReturnOrderId(): void
+    {
+        $productModel = ProductModel::factory()->createOne();
+
+        $orderModel = OrderModel::factory()->createOne();
+
+        $orderModelId = $orderModel->id;
+
+        OrderItemModel::factory(2)->create([
+            'product_id' => $productModel->id,
+            'order_id' => $orderModelId
+        ]);
+
+        $baseUrl = self::BASE_URL;
+
+        $response = $this->deleteJson("{$baseUrl}/{$orderModelId}");
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        $response->assertJsonStructure([
+            'status',
+            'data' => [
+                'id'
+            ]
+        ]);
+
+        $this->assertDatabaseMissing('orders', [
+            'id' => $orderModelId
+        ]);
+
+        $this->assertDatabaseMissing('order_items',[
+            'order_id' => $orderModelId
+        ]);
+
+    }
+
+    public function testDeleteOrderReturn404WhenNotFound(): void
+    {
+        $baseUrl = self::BASE_URL;
+
+        $response = $this->deleteJson("{$baseUrl}/0");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
 

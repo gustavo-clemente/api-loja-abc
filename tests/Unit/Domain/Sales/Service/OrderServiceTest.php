@@ -257,4 +257,34 @@ class OrderServiceTest extends TestCase
 
         $this->assertInstanceOf(Order::class, $order);
     }
+
+    public function testCancelOrderReturnsOrderId(): void
+    {
+        $orderId = new OrderId("1");
+
+        $this->mock(OrderRepository::class, function (MockInterface $mock) use($orderId): void  {
+            $mock->shouldReceive("cancelOrder")->once()->andReturn($orderId);
+        });
+
+        $orderIdReceived = app(OrderService::class)->cancelOrder($orderId);
+
+        $this->assertInstanceOf(OrderId::class, $orderIdReceived);
+    }
+
+    public function testCancelOrderThrowsWhenOrderNotFound(): void
+    {
+        $this->expectException(OrderNotFoundException::class);
+
+        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
+            $mock->shouldReceive("cancelOrder")->once()->andReturn(null);
+        });
+
+        $orderId = new OrderId("1");
+
+        $orderIdReceived = app(OrderService::class)->cancelOrder($orderId);
+
+        $this->assertNull($orderIdReceived);
+    }
+
+
 }

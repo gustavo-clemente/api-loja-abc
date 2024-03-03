@@ -69,17 +69,25 @@ class EloquentOrderRepository implements OrderRepository
 
         return $this->orderMapper->mapToDomain($orderModel);
     }
+    
+    public function cancelOrder(OrderId $orderId): ?OrderId
+    {
+        $order = OrderModel::find($orderId->getIdentifier());
 
+        if(!$order){
+            return null;
+        }
+
+        $order->delete();
+
+        return $orderId;
+    }
 
     public function addOrderItems(OrderItemsCollection $orderItems): Order
     {
         throw new \Exception("Not Implemented");
     }
 
-    public function cancelOrder(OrderId $order): bool
-    {
-        throw new \Exception("Not Implemented");
-    }
   
 
 }
