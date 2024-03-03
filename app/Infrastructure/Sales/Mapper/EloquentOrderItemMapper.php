@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types= 1);
+declare(strict_types=1);
 
 namespace App\Infrastructure\Sales\Mapper;
 
@@ -9,6 +9,7 @@ use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\ValueObject\OrderId;
 use App\Domain\Sales\ValueObject\OrderItemId;
 use App\Infrastructure\Sales\Model\OrderItemModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 class EloquentOrderItemMapper
@@ -16,7 +17,6 @@ class EloquentOrderItemMapper
     public function __construct(
         private EloquentProductMapper $productMapper
     ) {
-
     }
     public function mapToDomain(OrderItemModel $orderItem): OrderItem
     {

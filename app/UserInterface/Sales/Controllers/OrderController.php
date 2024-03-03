@@ -5,6 +5,7 @@ declare(strict_types= 1);
 namespace App\UserInterface\Sales\Controllers;
 
 use App\Application\Sales\Input\CreateOrderInput;
+use App\Application\Sales\Input\GetOrderByIdInput;
 use App\Application\Sales\OrderApplication;
 use App\Infrastructure\Laravel\Controller;
 use App\UserInterface\Sales\Request\CreateOrderRequest;
@@ -31,5 +32,14 @@ class OrderController extends Controller
         $output = $this->orderApplication->createOrder($inputCreateOrder);
 
         return new JsonResponse($output->jsonSerialize(), Response::HTTP_CREATED);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $inputGetById = new GetOrderByIdInput($id);
+
+        $output = $this->orderApplication->getById($inputGetById);
+
+        return new JsonResponse($output->jsonSerialize(), Response::HTTP_OK);
     }
 }

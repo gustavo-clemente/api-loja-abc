@@ -2,12 +2,11 @@
 
 declare(strict_types= 1);
 
-namespace Tests\Feature;
+namespace Tests\Feature\Sales;
 
 use App\Infrastructure\Sales\Model\OrderItemModel;
 use App\Infrastructure\Sales\Model\OrderModel;
 use App\Infrastructure\Sales\Model\ProductModel;
-use Database\Factories\Sales\OrderItemFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Symfony\Component\HttpFoundation\Response;
@@ -185,4 +184,60 @@ class OrderApiTest extends TestCase
             );
     }
 
+    public function testGetOrderByIdReturnOrder(): void
+    {
+        $productModel = ProductModel::factory()->createOne();
+
+        $orderModel = OrderModel::factory()->createOne();
+
+        $orderModelId = $orderModel->id;
+
+        OrderItemModel::factory(2)->create([
+            'product_id' => $productModel->id,
+            'order_id' => $orderModelId
+        ]);
+
+        $response = $this->getJson("api/order/{$orderModelId}");
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        $response->assertJsonStructure([
+            'status',
+            'data' => [
+                'id',
+                'amount',
+                'products' => [
+                    [
+                        'id',
+                        'orderId',
+                        'productId',
+                        'name',
+                        'price',
+                        'quantity',
+                    ],
+                    [
+                        'id',
+                        'orderId',
+                        'productId',
+                        'name',
+                        'price',
+                        'quantity',
+                    ]
+                ]
+            ]
+        ]);
+
+    }
+    
+    public function testGetOrderByIdReturn404WhenNotFound(): void
+    {
+        $response = $this->getJson("api/order/0");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+
+        $response->assertJson(
+            fn(AssertableJson $json) =>
+              $json->hasAll(['status','message'])
+        );
+    }
 }

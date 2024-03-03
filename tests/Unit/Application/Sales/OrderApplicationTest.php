@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Unit\Application\Sales;
 
 use App\Application\Sales\Input\CreateOrderInput;
+use App\Application\Sales\Input\GetOrderByIdInput;
 use App\Application\Sales\OrderApplication;
 use App\Application\Sales\Output\CreateOrderOutput;
 use App\Application\Sales\Output\FindAllOrdersOutput;
+use App\Application\Sales\Output\GetOrderByIdOutput;
 use App\Domain\Sales\Entity\Order;
 use App\Domain\Sales\Entity\OrderCollection;
 use App\Domain\Sales\Entity\OrderItem;
@@ -85,6 +87,43 @@ class OrderApplicationTest extends TestCase
         $this->assertEquals($orderForAsserts->getTotalAmountInReal(), $outputItemForAsserts['amount']);
 
         $this->assertCount(count($orderForAsserts->getOrderItems()->getItems()), $outputItemForAsserts['products']);
+    }
+
+    public function testGetByIdReturnsCorrectOutput(): void
+    {
+        $order = new Order(
+            id: new OrderId('1'),
+            orderItems: new OrderItemsCollection([
+                new OrderItem(
+                    id: new OrderItemId('1'),
+                    orderId: new OrderId('1'),
+                    product: new Product(
+                        id: new ProductId('1'),
+                        name: 'p1',
+                        priceInCents: 500000,
+                        description: '',
+                        createdAt: new DateTime(),
+                        updatedAt: new DateTime(),
+
+                    ),
+                    quantity: 2,
+                    createdAt: new DateTime(),
+                    updatedAt: new DateTime(),
+                )
+            ])
+        );
+
+        $this->mock(OrderService::class, function (MockInterface $mock) use ($order) {
+            $mock
+                ->shouldReceive('getOrderById')
+                ->once()
+                ->andReturn($order);
+        });
+
+        $input = new GetOrderByIdInput('1');
+        $output = app(OrderApplication::class)->getById($input);
+
+        $this->assertInstanceOf(GetOrderByIdOutput::class, $output);
     }
 
     private function generateOrderCollectionForTest(int $ordersToBeGenerate = 1): OrderCollection

@@ -128,4 +128,48 @@ class EloquentOrderRepositoryTest extends TestCase
         $this->assertNotEmpty($orderItem->getQuantity());
         $this->assertNotEmpty($orderItem->getCreatedAt());
     }
+
+    public function testFindByIdReturnsOrder(): void
+    {
+        $orderModel = OrderModel::factory()->createOne();
+        $productModel = ProductModel::factory()->createOne();
+
+        OrderItemModel::factory(2)->create([
+            'order_id' => $orderModel->id,
+            'product_id' => $productModel->id,
+        ]);
+
+        $orderId = new OrderId($orderModel->id);
+
+        $order = app(EloquentOrderRepository::class)->findById($orderId);
+
+        $this->assertInstanceOf(Order::class, $order);
+        $this->assertSame($orderModel->id, $order->getOrderId()->getIdentifier());
+
+
+        $this->assertNotEmpty($order->getOrderId());
+        $this->assertNotEmpty($order->getOrderItems());
+        $this->assertNotEmpty($order->getCreatedAt());
+        $orderItems = $order->getOrderItems()->getItems();
+
+        $orderItem = $orderItems[0];
+
+        $this->assertEquals($order->getOrderId()->getIdentifier(), $orderItem->getOrderId()->getIdentifier());
+        $this->assertNotEmpty($orderItem->getProduct()->getId());
+        $this->assertNotEmpty($orderItem->getProduct()->getName());
+        $this->assertNotEmpty($orderItem->getProduct()->getPriceInCents());
+        $this->assertNotEmpty($orderItem->getProduct()->getDescription());
+        $this->assertNotEmpty($orderItem->getQuantity());
+        $this->assertNotEmpty($orderItem->getCreatedAt());
+
+    }
+
+    public function testFindByIdReturnNullWhenNotFound(): void
+    {
+        $orderId = new OrderId('000');
+
+        $order = app(EloquentOrderRepository::class)->findById($orderId);
+
+        $this->assertNull($order);
+    }
 }

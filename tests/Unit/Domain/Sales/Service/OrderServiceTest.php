@@ -11,6 +11,7 @@ use App\Domain\Sales\Entity\OrderItemsCollection;
 use App\Domain\Sales\Entity\Product;
 use App\Domain\Sales\Exception\EmptyOrderException;
 use App\Domain\Sales\Exception\InvalidOrderItemQuantityException;
+use App\Domain\Sales\Exception\OrderNotFoundException;
 use App\Domain\Sales\Exception\OrderWithDuplicateProductEntyException;
 use App\Domain\Sales\Repository\OrderRepository;
 use App\Domain\Sales\Service\OrderService;
@@ -90,65 +91,6 @@ class OrderServiceTest extends TestCase
         app(OrderService::class)->createOrder($orderForTest);
     }
 
-    public function testCreateOrderThrowExceptionWhenHasDuplicateProductId(): void
-    {
-        $this->expectException(OrderWithDuplicateProductEntyException::class);
-        $this->mock(OrderRepository::class, function (MockInterface $mock) {
-            $mock
-              ->shouldNotReceive("createOrder")
-            ;
-        });
-
-        $orderForTest = new Order(
-            id: null,
-            orderItems: new OrderItemsCollection([
-                new OrderItem(
-                    id: null,
-                    orderId: null,
-                    product: new Product(
-                        id: new ProductId('1'),
-                    ),
-                    quantity:2,
-
-                ),
-                new OrderItem(
-                    id: null,
-                    orderId: null,
-                    product: new Product(
-                        id: new ProductId('13'),
-                    ),
-                    quantity:3,
-
-                ),
-                new OrderItem(
-                    id: null,
-                    orderId: null,
-                    product: new Product(
-                        id: new ProductId('1'),
-                    ),
-                    quantity:3,
-
-                )
-            ])
-        );
-
-        app(OrderService::class)->createOrder($orderForTest);
-    }
-
-    public function testGetAllOrdersReturnsOrderCollection(): void
-    {
-        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
-            $mock
-            ->shouldReceive("findAll")
-            ->once()
-            ->andReturn(new OrderCollection([]));
-        });
-
-        $orders = app(OrderService::class)->getAllOrders();
-
-        $this->assertInstanceOf(OrderCollection::class, $orders);
-    }
-
     public static function dataProviderForTestOrderItemLessThanZero(): array
     {
         return [
@@ -221,5 +163,98 @@ class OrderServiceTest extends TestCase
             ]
 
         ];
+    }
+
+    public function testCreateOrderThrowExceptionWhenHasDuplicateProductId(): void
+    {
+        $this->expectException(OrderWithDuplicateProductEntyException::class);
+        $this->mock(OrderRepository::class, function (MockInterface $mock) {
+            $mock
+              ->shouldNotReceive("createOrder")
+            ;
+        });
+
+        $orderForTest = new Order(
+            id: null,
+            orderItems: new OrderItemsCollection([
+                new OrderItem(
+                    id: null,
+                    orderId: null,
+                    product: new Product(
+                        id: new ProductId('1'),
+                    ),
+                    quantity:2,
+
+                ),
+                new OrderItem(
+                    id: null,
+                    orderId: null,
+                    product: new Product(
+                        id: new ProductId('13'),
+                    ),
+                    quantity:3,
+
+                ),
+                new OrderItem(
+                    id: null,
+                    orderId: null,
+                    product: new Product(
+                        id: new ProductId('1'),
+                    ),
+                    quantity:3,
+
+                )
+            ])
+        );
+
+        app(OrderService::class)->createOrder($orderForTest);
+    }
+
+    public function testGetAllOrdersReturnsOrderCollection(): void
+    {
+        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
+            $mock
+            ->shouldReceive("findAll")
+            ->once()
+            ->andReturn(new OrderCollection([]));
+        });
+
+        $orders = app(OrderService::class)->getAllOrders();
+
+        $this->assertInstanceOf(OrderCollection::class, $orders);
+    }
+
+    public function testGetByIdReturnsOrder(): void
+    {
+        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
+            $mock
+            ->shouldReceive("findById")
+            ->once()
+            ->andReturn(new Order());
+        });
+
+        $orderId = new OrderId("1");
+
+        $order = app(OrderService::class)->getOrderById($orderId);
+
+        $this->assertInstanceOf(Order::class, $order);
+    }
+
+    public function testGetByIdThrowsWhenOrderNotFound(): void
+    {
+        $this->expectException(OrderNotFoundException::class);
+
+        $this->mock(OrderRepository::class, function (MockInterface $mock): void {
+            $mock
+            ->shouldReceive("findById")
+            ->once()
+            ->andReturn(null);
+        });
+
+        $orderId = new OrderId("1");
+
+        $order = app(OrderService::class)->getOrderById($orderId);
+
+        $this->assertInstanceOf(Order::class, $order);
     }
 }

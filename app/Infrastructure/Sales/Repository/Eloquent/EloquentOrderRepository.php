@@ -51,6 +51,7 @@ class EloquentOrderRepository implements OrderRepository
 
         return new OrderId((string)$orderModel->id);
     }
+    
 
     public function findAll(): OrderCollection
     {
@@ -58,6 +59,18 @@ class EloquentOrderRepository implements OrderRepository
 
         return $this->orderMapper->mapToDomainCollection($ordersModel);
     }
+    public function findById(OrderId $orderId): ?Order
+    {
+        $orderModel = OrderModel::with(['items', 'items.product'])->find($orderId->getIdentifier());
+
+        if(is_null($orderModel)){
+            return null;
+        }
+
+        return $this->orderMapper->mapToDomain($orderModel);
+    }
+
+
     public function addOrderItems(OrderItemsCollection $orderItems): Order
     {
         throw new \Exception("Not Implemented");
@@ -67,10 +80,6 @@ class EloquentOrderRepository implements OrderRepository
     {
         throw new \Exception("Not Implemented");
     }
+  
 
-
-    public function findById(OrderId $orderId): ?Order
-    {
-        throw new \Exception("Not implemented");
-    }
 }

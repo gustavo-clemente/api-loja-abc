@@ -6,9 +6,12 @@ namespace App\Domain\Sales\Service;
 
 use App\Domain\Sales\Entity\Order;
 use App\Domain\Sales\Entity\OrderCollection;
+use App\Domain\Sales\Exception\OrderNotFound;
+use App\Domain\Sales\Exception\OrderNotFoundException;
 use App\Domain\Sales\Repository\OrderRepository;
 use App\Domain\Sales\ValueObject\OrderId;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrderService
 {
@@ -31,7 +34,13 @@ class OrderService
 
     public function getOrderById(OrderId $orderId): Order
     {
-        throw new Exception('Not Implemented');
+        $order = $this->orderRepository->findById($orderId);
+
+        if(is_null($order)){
+            throw new OrderNotFoundException("Order id not found", Response::HTTP_NOT_FOUND);
+        }
+
+        return $order;
     }
 
     public function cancelOrder(OrderId $orderId): void
