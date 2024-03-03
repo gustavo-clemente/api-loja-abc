@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Sales;
 
-use App\Domain\Sales\ValueObject\OrderId;
 use App\Infrastructure\Sales\Model\OrderItemModel;
 use App\Infrastructure\Sales\Model\OrderModel;
 use App\Infrastructure\Sales\Model\ProductModel;
@@ -173,7 +172,6 @@ class OrderApiTest extends TestCase
                         1,
                         fn (AssertableJson $json) =>
                         $json->hasAll([
-                            'id',
                             'orderId',
                             'productId',
                             'name',
@@ -211,7 +209,6 @@ class OrderApiTest extends TestCase
                 'amount',
                 'products' => [
                     [
-                        'id',
                         'orderId',
                         'productId',
                         'name',
@@ -219,7 +216,6 @@ class OrderApiTest extends TestCase
                         'quantity',
                     ],
                     [
-                        'id',
                         'orderId',
                         'productId',
                         'name',
@@ -345,7 +341,6 @@ class OrderApiTest extends TestCase
                         4,
                         fn (AssertableJson $json) =>
                         $json->hasAll([
-                            'id',
                             'orderId',
                             'productId',
                             'name',

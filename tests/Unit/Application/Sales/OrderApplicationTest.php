@@ -160,7 +160,7 @@ class OrderApplicationTest extends TestCase
                 ->andReturn($order);
         });
 
-        $input = new AddOrderItemsInput('1',[
+        $input = new AddOrderItemsInput(1,[
             "items" => [
                 [
                     "id" => 1,
